@@ -1,0 +1,43 @@
+\documentclass[12pt]{article}
+\usepackage{graphicx}
+\usepackage{amsmath}
+%\usepackage{fullpage}
+
+\usepackage[icelandic]{babel}    
+\usepackage[T1]{fontenc}
+\usepackage[utf8x]{inputenc}
+
+\title{Exponential smoothing}
+\author{Rebekka Jóhannsdóttir, Magnea Gunnarsdóttir)
+\begin{document}
+\maketitle 
+\section{Veldisjöfnun}
+Veldisjöfnun er góð leið til að spá fyrir um gögn þegar takmörkuð gögn eru fyrir hendi þar sem aðferðin krefst fárra parametra. Spáin gerir ráð fyrir að trend eða árstíðarsveilfur seinustu ára haldi áfram og þess vegna stundum talað um að veldisjöfnun sé ekki hentugt fyrir langtíma spá þar sem trend eða árstíðarsveiflur eiga til að deyja út til lengri tíma. Veldisjöfnuninn nær ekki að grípa atburði sem eru ekki reglulegir eða atburði sem hreyfast til á dagatalinu, ekki alltaf á sama tíma árs. Veldisjöfnun getur spáð fyrir um level, trend og seasonality.  Veldisjöfnun er oft notuð í framleiðsluspám og þá í verkröðun, vaktaskipulagi og innkaupum.
+
+\subsection{Einföld Veldisjöfnun}
+Með einfaldri veldisjöfnun er notað vegið meðaltal allra fyrri tímabila til þess að spá fyrir um framtíðina. Þetta hentar fyrir spár þar sem ekki eru trend, engar árstóðarsveiflur og ekkert level í gögnunum. Formúlan sem er notuð til þess að spá um næsta tímabil er eftirfarandi:
+
+$ESF_{t+1} = ESF_t + /alpha ( Ad_t - ESF_t )$. Þar sem ESF stendur fyrir Exponential Smoothing Forecast, Ad er Actual demand og $/alpha$ ræðsta af því hvort spáin eigi að vera stöðug eða kvik. Því stærra sem aplha er  því meira vægi er sett á ný gildi og því kvikari verður hún en þetta er venjulega fundið út frá reynslu og þá oftast notað það sem lágmarkar skekkju.
+
+Í framleiðsluspám viljum við hafa stöðugleika og því gott að nota $/alpha$ á bilinu 0,1-0,2.
+
+\subsection{Tvöföld Veldisjöfnun}
+Þar sem einföld veldisjöfnun nær illa að meðhöndla halla í gögnum (tímaseinkun) þá er hugmyndin að nota veldisjöfnun og leiðrétta hana fyrir halla. Þetta er kallað tvöföld veldisjöfnun og er kennd við Holt’s aðferðina. 
+
+Holt’s aðferðin reiknar meðaltöl og lagfræðir þau með tillit til halla.
+$FIT_t$  = $F_t + T_t$ þar sem $F_t$ er einföld veldisjöfnun og $T_t$ mat á halla línunnar.
+
+Formúlan fyrir þessa aðferð er : $Ft = /alpha * At_1 + (1-/alpha) [Ft_1 + Tt_1] =  At_1 + (1-/alpha) FITt_1$
+
+
+\subsection{Þreföld Veldisjöfnun}
+Þreföld veldisjöfnun er aðferð sem notar bæði aðlögun að halla og árstíðastuðla og er kölluð Holt’s-Winter aðferðin. Hér er árstíðarstuðulinn annað hvort margfaldaður eða bættur við Holt’s aðferðina.
+Árstíðarstuðullinn er margfaldaður ef við seljum 10$/percent$ fleiri íbúðir á sumrin en á veturnar. Árstíðarstuðullinn er hins vegar bættur við þegar við seljum t.d. 10.000 fleiri íbúðir í desember en við gerðum í nóvember.
+ 
+
+
+
+%\bibliographystyle{plain}
+%\bibliography{forecast_references}
+
+\end{document}
