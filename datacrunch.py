@@ -16,8 +16,12 @@ def DagarM(gogn):
 		res.append(gogn[gogn["Manudur"]==i].Simtol_inn.sum())
 
 	return(res)
+def Vikur(gogn):
+	res=[]
+	for i in range(0,26):
+		res.append(gogn[gogn["Vikunumer"]==i].Simtol_inn.sum())
 
-
+	return(res)
 
 
 
@@ -179,4 +183,12 @@ plt.title("fjöldi innhringinga á laugardögum í hverjum mánuði")
 plt.figure()
 plt.scatter(A,sunnu2)
 plt.title("fjöldi innhringinga á Sunnudögum í hverjum mánuði")
+plt.show()
+
+
+Ncallsweek=Vikur(Data)
+N=range(0,26)
+plt.figure()
+plt.plot(N,Ncallsweek)
+plt.title("fjöldi Símtala á viku")
 plt.show()
