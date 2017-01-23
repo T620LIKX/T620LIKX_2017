@@ -8,11 +8,14 @@ def Dagar(gogn):
 	for i in range(0,19):
 		res.append(gogn[gogn["Vikunumer"]==i].Simtol_inn.sum())
 
-
-	
 	return res
 
+def DagarM(gogn):
+	res=[]
+	for i in range(1,6):
+		res.append(gogn[gogn["Manudur"]==i].Simtol_inn.sum())
 
+	return(res)
 
 
 
@@ -123,15 +126,25 @@ plt.plot(V,manudagar)
 plt.title("fjöldi innhringinga á mánudögum eftir vikum")
 plt.figure()
 plt.plot(V,midvikudagar)
-plt.title("fjöldi innhringinga á þriðjudögum eftir vikum")
+plt.title("fjöldi innhringina á miðvikudögum eftir vikum")
 plt.figure()
 plt.plot(V,fimmtudagar)
-plt.title("fjöldi innhringina á miðvikudögum eftir vikum")
+plt.title("fjöldi innhringina á fimmtudögum eftir vikum")
 plt.figure()
 plt.plot(V,laugardagar)
 plt.title("fjöldi innhringina á laugardögum eftir vikum")
 plt.figure()
 plt.plot(V,sunnudagar)
 plt.title("fjöldi innhringina á sunnudögum eftir vikum")
+plt.figure()
+plt.plot(V,tridudagar)
+plt.title("fjöldi innhringinga á þriðjudögum eftir vikum")
+plt.show()
 
+manudir=DagarM(Data)
+A=range(1,6)
+
+plt.figure()
+plt.scatter(A,manudir)
+plt.title("fjöldi innhringina á mánuði")
 plt.show()
