@@ -1,13 +1,13 @@
 \section {Þreföld veldisjöfnun}
- 
 
-Þegar spáð er fyrir með veldisjöfnun og gögninn sem spáin byggir á innihalda línulega hneigð og árstíðarsveiflu þá þarf að beita þrefaldri veldisjöfnun. Til að geta beit þessari spáaðferð þarf að lágmarki að hafa gögn fyrir tvær árstíðir.\cite{HoltWinters}
+
+Þegar spáð er fyrir með veldisjöfnun og gögninn sem spáin byggir á innihalda línulega hneigð og árstíðarsveiflu þá þarf að beita þrefaldri veldisjöfnun \cite{HoltWinters}. Til að geta beitt þessari spáaðferð þarf að lágmarki að hafa gögn fyrir tvær árstíðir.
 
 \subsection{Skilgreiningar á táknum}
 	$F_(t+m)=$ spá fyrir tímabilið  t+m \\
-	$S_t =$  veldisjöfnun fyrir tímabil t\\ 	
+	$S_t =$  veldisjöfnun fyrir tímabil t\\
 	$b_t =$ línuleg hneigð jöfnin \\
-	$I_t =$ árstíðarsveiflujöfnn jöfnun fyrir tímabil ts \\
+	$I_t =$ árstíðarsveiflujöfn jöfnun fyrir tímabil ts \\
 	$y =$ gögn\\
 	$S =$ veldisjöfnuð gögn \\
 	$I =$	árstíðar stuðull \\
@@ -22,11 +22,21 @@
 
 
 \subsection{Jöfnur}
-	
-	
+
+\noindent Veldisjöfnun fyrir tímabil $t$:
 	$$S_t = \alpha\dfrac{y_t}{I_{t - L}} + (1-\alpha)(S_{t-1}+ b_{t-1} ) $$
+
+\noindent Línuleg hneigð:
 	$$b_t = \gamma  (S_{t}-S_{t-1})+(1- \gamma) + (1 - \gamma)b_{t-1}$$
+
+\noindent Árstíðarsveiflustuðull:
 	$$I_t = \beta \dfrac{y_t}{S_t} +(1-\beta)I_{t-L} $$
-	$$F_t+m = (S_{t} +mb_{t})I_{t-L+m}$$
+
+\noindent Spá fyrir tímabilið ($t+m$):
+	$$F_{t+m} = (S_{t} +mb_{t})I_{t-L+m}$$
+
+\noindent Línuleg hneigð:
 	$$b= \dfrac{1}{L}(\dfrac{y_{L+1}-y_1}{L} + \dfrac{y_{L+2}-y_2}{L}+......+ \dfrac{y_{L+L}-y_L}{L} ) $$
+
+\noindent Meðaltal fyrir lotu í árstíð:
 	$$A_p = \dfrac{\sum_{i=1}^{t=10} y_i}{L} $$

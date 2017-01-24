@@ -1,13 +1,14 @@
-\section {Sveiflur og letni(e.trends)}
- 
-Þegar spá þarf fyrir um sveiflur eða leitni sem eru í gangi þá þarf að passa að velja réttar spáaðferðir. Gagnlegt er að líta á vöxt fyrirtækinsins og markaðarins í sölu/aðgerðum, þegar litið er á gögn um mánaða eða árabil og augljóst mynstur er milli daga, vikna eða mánaða má áætla að mynstrið haldi áfram og hægt að yfirfara það í spá. Mikilvægt að hafa næg gögn yfirleitt miðað við tvö tímabil eða meira. \cite{WhatIsTrendForecasting}
+\section {Sveiflur og leitni (e. Trends)}
+
+Þegar spá þarf fyrir um sveiflur eða leitni \cite{WhatIsTrendForecasting} sem eru í gangi þá þarf að passa að velja réttar spáaðferðir. Gagnlegt er að líta á vöxt fyrirtækinsins og markaðarins í sölu/aðgerðum, þegar litið er á gögn um mánaða eða árabil og augljóst mynstur er milli daga, vikna eða mánaða má áætla að mynstrið haldi áfram og hægt að yfirfara það í spá. Mikilvægt að hafa næg gögn yfirleitt miðað við tvö tímabil eða meira.
 
 \subsection{Aðferðir}
-Árstíðarsveiflur eða vikusveiflu geta verið metna með árstíðarsveiflustðulum (e.seasonal index), getur verið háð eða óháð breytingu á meðal eftirspurnar. Leitni (e.trend) er auðvelt að meta bæði minkunn eða aukingu í eftirspurn, þá er hallatala bestu línu gegnum gagna punkta fundin, einnig getu verið enginn leitni ef eftirspurn helst stöðug.\cite{TrendLine}
+Árstíðarsveiflur eða vikusveiflu geta verið metnar með árstíðarsveiflustðulum (e. Seasonal Index), getur verið háð eða óháð breytingu á meðal eftirspurnar. Leitni (e. Trend) \cite{TrendLine} er auðvelt að meta bæði minnkun eða aukingu í eftirspurn, þá er hallatala bestu línu gegnum gagnapunkta fundin, einnig getur verið engin leitni ef eftirspurn helst stöðug.
 
 
 \subsection{Jöfnur}
 
+Breytur og fastar:\\
 	$y=$ tímabilsgögn \\
 	$I=$ árstíðarstuðull \\
 	$L=$ fjöldi lotna á tímabili \\
@@ -15,11 +16,18 @@
 	$m=$ hallatala bestu línu \\
 	$x=$ tími gagna \\
 	$\overline{X} = $ meðaltal tímabilsins \\
-	$\overline{Y}= $ meðaltal gaggna tímabilsins \\
+	$\overline{Y}= $ meðaltal gagna tímabilsins \\
 	$ b= $ skurðpunktur \\
 	$ Y= $ jafna bestu línu \\
 
+\noindent Árstíðarstuðull er reiknaður sem:
 	$$ I=  A_p/(y/L) $$ \\
-	$$ m= \frac{\sum_{i=1}^{n} (x_{i}-\overline{X})(y_{i}-\overline{Y})}{\sum_{i=1}^{n} (x_{i}-\overline{X})^{2}} $$ \\	
+
+\noindent Hallatala bestu línu fæst með:
+	$$ m= \frac{\sum_{i=1}^{n} (x_{i}-\overline{X})(y_{i}-\overline{Y})}{\sum_{i=1}^{n} (x_{i}-\overline{X})^{2}} $$ \\
+
+\noindent Skurðpunktur er:
 	$$ b=  \overline {Y} -m\overline{X} $$ \\
+
+\noindent og jafna bestu línu er fengin sem:
 	$$ Y=  mx+b $$ \\
