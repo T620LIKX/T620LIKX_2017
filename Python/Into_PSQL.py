@@ -8,12 +8,12 @@ Data=pd.read_excel('C:\data\DataA.xlsx', skiprows=3,parse_cols='B:P')  #skrá se
 
 #Breytum íslenskum stöfum í dálka nöfnum og línubil tekinn út 
 cols = Data.columns
-cols = cols.map(lambda x: x.replace(' ', '_').replace('á','a').replace('Á','A').replace('ð','d').replace('í','i').replace('ö','o').replace('ú','u'))
+cols = cols.map(lambda x: x.replace(' ', '_').replace('á','a').replace('Á','a').replace('ð','d').replace('í','i').replace('ö','o').replace('ú','u').lower())
 Data.columns = cols
 #íslenskir stafir teknir úr daga dálki
-dag = Data.Dagur
+dag = Data.dagur
 dag =dag.map(lambda x: x.replace('ö','o').replace('á','a').replace('ð','d').replace('þ','t'))
-Data.Dagur=dag
+Data.dagur=dag
 print(Data)
-engine = create_engine('postgresql://USERNAME:PASSWORD@localhost:5432/DATABASE') # býr til töflu með öllum gögnunum í postres þarf að setja inn notendanafn, password og nafn á gagnagrunni
-Data.to_sql('data', engine)
+#engine = create_engine('postgresql://USERNAME:PASSWORD@localhost:5432/DATABASE') # býr til töflu með öllum gögnunum í postres þarf að setja inn notendanafn, password og nafn á gagnagrunni
+#Data.to_sql('data', engine)
