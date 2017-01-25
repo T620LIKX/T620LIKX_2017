@@ -3,20 +3,20 @@
 
 $$F_{t+m|t} = F_t.$$\\
 
-Þar sem F_t er gildið á tímabilinu á undan spátímabilinu.
+Þar sem $F_t$ er gildið á tímabilinu á undan spátímabilinu.
 
 Þessi aðferð virkar einungis þegar spá á fyrir gildi á tímabil og gildi fyrra tímabils er þekkt.
 Þessi aðferð er með ýmsu nothæf vegna einfaldleika hennar og veitir viðmið á móti flóknari aðferðum Hún virkar vel fyrir þegar það á að spá fyrir næsta tímabil í greinum þar sem munstur eru óstöðug og erfið að leggja mat á, s.s. efnahagslegar og fjárhagslegar spár\cite{NaiveApproach}.
 
-\subesetion {Drift method}
+\subsection {Drift method}
 
-\textit{Drift method} er önnur útgáfa af \textit{Naive Approach} þar sem fundinn er stuðull sem eykur eða minnkar spágildið. Stuðullinn er fundin með því að taka meðaltal af fyrsta og síðasta gangapunkti sem er samsvarandi því að draga beina línu á milli þeirra og meta spágildið útfrá framhaldi af línunni. Jafnan verður því
+\textit{Drift method} \cite{NaiveApproach2} er önnur útgáfa af \textit{Naive Approach} þar sem fundinn er stuðull sem eykur eða minnkar spágildið. Stuðullinn er fundin með því að taka meðaltal af fyrsta og síðasta gangapunkti sem er samsvarandi því að draga beina línu á milli þeirra og meta spágildið útfrá framhaldi af línunni. Jafnan verður því
 
-$$F_{t+m|t} = y_t + \frac{m}{t-1}\displaystyle\sum_{i=2}^{t} (y_i-y_{t-1}) = y_t + \frac{m}{t-1}(y_i-y_{t-1}) \cite{NaiveApproach2}.$$\\
+$$F_{t+m|t} = y_t + \frac{m}{t-1}\displaystyle\sum_{i=2}^{t} (y_i-y_{t-1}) = y_t + \frac{m}{t-1}(y_i-y_{t-1}) .$$\\
 
-\subesction{Seasonal naive method}
+\subsection{Seasonal naive method}
 Ef gögnin taka miklum breytingum eftir árstíðum þá getur verið ganglegt að nota \textit{Seasonal naive} aðferðina. Þá er spágildið sett sem síðasta gildið frá sama tímabili. Jafnan verður því
 
 $$ F_{t+m|t} = y_{t+m-ks} $$\\
 
-þar sem s = árstíð og k = [\frac{m-1}{m}]+1\cite{NaiveApproach2}.
+þar sem s = árstíð og $k = [\frac{m-1}{m}]+1$.
