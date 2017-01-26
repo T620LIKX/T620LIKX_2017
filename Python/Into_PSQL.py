@@ -4,7 +4,7 @@ import matplotlib.pylab as plt
 from sqlalchemy import create_engine
 #Línur sem eru kommentaðar út innihalda kóða þar sem hver notandi þarf að gera breytingar
 Data = pd.DataFrame()
-Data=pd.read_excel('C:\data\DataA.xlsx', skiprows=3,parse_cols='B:P')  #skrá sett inn í pandas dataframe - athugið slóð að skrá er breytileg
+Data=pd.read_excel('D:\GagnagrunnurLIKX.xlsx', skiprows=3,parse_cols='B:P')  #skrá sett inn í pandas dataframe - athugið slóð að skrá er breytileg
 
 #Breytum íslenskum stöfum í dálka nöfnum og línubil tekinn út 
 cols = Data.columns
@@ -15,5 +15,5 @@ dag = Data.dagur
 dag =dag.map(lambda x: x.replace('ö','o').replace('á','a').replace('ð','d').replace('þ','t'))
 Data.dagur=dag
 print(Data)
-#engine = create_engine('postgresql://USERNAME:PASSWORD@localhost:5432/DATABASE') # býr til töflu með öllum gögnunum í postres þarf að setja inn notendanafn, password og nafn á gagnagrunni
-#Data.to_sql('data', engine)
+engine = create_engine('postgresql://postgres:postgres@localhost:5432/LikanX') # býr til töflu með öllum gögnunum í postres þarf að setja inn notendanafn, password og nafn á gagnagrunni
+Data.to_sql('data', engine)
