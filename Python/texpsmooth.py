@@ -1,7 +1,21 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pylab as plt 
+import scipy.optimize as sci
+import math
 
+def opti(x):
+    spa=triple_exponential_smoothing(M,7,x[0],x[1],x[2],14)
+
+    return(MSE(M,spa))
+
+
+
+def MSE(M,spa):
+    res=0
+    for i in range(0,len(M)):
+        res=res+math.sqrt((M[i]-spa[i])**2)
+    return res/len(M)
 
 def Dagar(gogn):
 	res=[]
@@ -85,15 +99,11 @@ Data=Data[Data["manudur"]<4]
 M=[];
 V=0;
 
-for i in range(21,1171):
+for i in range(21,len(Data.index)):
 	V=V+Data.loc[i,"simtol_inn"]
 	if Data.loc[i,"klukkustund"]==21:
 		M.append(V)
 		V=0
-
-
-
-
 
 lengd=7
 alph=0.2
@@ -102,8 +112,23 @@ gamma=0.2
 spa=14
 
 x=triple_exponential_smoothing(M,lengd,alph,beta,gamma,spa)
+Z=[0.2,0.2,0.2]
+
+res=sci.minimize(opti,Z)
+Sopt=triple_exponential_smoothing(M,7,res.x[0],res.x[1],res.x[2],spa)
+err=(MSE(M,Sopt))
+plt.figure()
 plt.plot(range(0,len(M)),M,marker='o',linestyle='-')
 
 plt.plot(range(len(M),len(x)),x[len(M):], marker='o',linestyle='-',color='r')
+plt.title("firsta spá alpa=0,2, beta=0,2 gamma=0,2")
 
+
+plt.figure()
+
+plt.plot(range(0,len(M)),M,marker='o',linestyle='-')
+plt.errorbar(range(0,len(Sopt)),Sopt,yerr=err ,marker='o',linestyle='--')
+plt.title("lámörkuð MSE skekkja")
 plt.show()
+
+plt.figure()
