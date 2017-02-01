@@ -34,25 +34,35 @@ cursor, conn = db_connect(host, username, pw, dbname = 'NULL')
 connection_close(cursor, conn)
 #Connect to database 
 cursor, conn = db_connect(host, username, pw, dbname = 'likanx')
-# fetch all of the rows from the query
+SQLCommand = ("SELECT manudur,vikunumer,dagur,dagsetning,klukkustund,simtol_inn"
+               " FROM data") 
+gogn=[]
+cursor.execute(SQLCommand)
+# Using a while loop, taka allt í einu
+row = cursor.fetchone()
+while row is not None:
+	gogn.append(row)
+	row = cursor.fetchone()
+	print(gogn)
 
-# væri sniðugt að setja þetta í fall .... ég veit :)
-cursor.execute("SELECT manudur" " FROM data") 
-manudur = cursor.fetchall()
 
-cursor.execute("SELECT vikunumer" " FROM data") 
-vika = cursor.fetchall()
+# # taka eitt í einu
+# cursor.execute("SELECT manudur" " FROM data") 
+# manudur = cursor.fetchall()
 
-cursor.execute("SELECT dagur" " FROM data") 
-dagur = cursor.fetchall()
+# cursor.execute("SELECT vikunumer" " FROM data") 
+# vika = cursor.fetchall()
 
-cursor.execute("SELECT dagsetning" " FROM data") 
-dagsetning = cursor.fetchall()
+# cursor.execute("SELECT dagur" " FROM data") 
+# dagur = cursor.fetchall()
 
-cursor.execute("SELECT klukkustund" " FROM data") 
-klukkustund = cursor.fetchall()
+# cursor.execute("SELECT dagsetning" " FROM data") 
+# dagsetning = cursor.fetchall()
 
-cursor.execute("SELECT simtol_inn" " FROM data") 
-stimtol = cursor.fetchall()
+# cursor.execute("SELECT klukkustund" " FROM data") 
+# klukkustund = cursor.fetchall()
+
+# cursor.execute("SELECT simtol_inn" " FROM data") 
+# stimtol = cursor.fetchall()
 
 connection_close(cursor, conn)
