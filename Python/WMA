@@ -1,0 +1,178 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pylab as plt 
+from scipy.signal import fftconvolve as fc
+
+
+def Dagar(gogn):
+	res=[]
+	for i in range(0,19):
+		res.append(gogn[gogn["vikunumer"]==i].simtol_inn.sum())
+
+	return res
+
+def DagarM(gogn):
+	res=[]
+	for i in range(1,6):
+		res.append(gogn[gogn["manudur"]==i].simtol_inn.sum())
+
+	return(res)
+def Vikur(gogn):
+	res=[]
+	for i in range(0,26):
+		res.append(gogn[gogn["vikunumer"]==i].simtol_inn.sum())
+
+	return(res)
+
+
+
+Data = pd.DataFrame()
+Data=pd.read_excel('/Users/styrmirfjeldsted/Documents/LikanX/Verkefni2/DataA.xlsx', skiprows=3,parse_cols='B:P')  #skrá sett inn í pandas dataframe - athugið slóð að skrá er breytileg
+
+#Breytum íslenskum stöfum í dálka nöfnum og línubil tekinn út 
+cols = Data.columns
+cols = cols.map(lambda x: x.replace(' ', '_').replace('á','a').replace('Á','A').replace('ð','d').replace('í','i').replace('ö','o').replace('ú','u').lower())
+Data.columns = cols
+#íslenskir stafir teknir úr daga dálki
+dag = Data.dagur
+dag =dag.map(lambda x: x.replace('ö','o').replace('á','a').replace('ð','d').replace('þ','t'))
+Data.dagur=dag
+
+man=Data[Data["dagur"] =='man']
+tri=Data[Data["dagur"] =='tri']
+mid=Data[Data["dagur"] =='mid']
+fim=Data[Data["dagur"] =='fim']
+fos=Data[Data["dagur"] =='fos']
+lau=Data[Data["dagur"] =='lau']
+sun=Data[Data["dagur"] =='sun']
+
+man_av=[]
+man_std=[]
+tri_av=[]
+tri_std=[]
+mid_av=[]
+mid_std=[]
+fim_av=[]
+fim_std=[]
+fos_av=[]
+fos_std=[]
+lau_av=[]
+lau_std=[]
+sun_av=[]
+sun_std=[]
+
+for i in range(8,22):
+	man_av.append(man[man["klukkustund"]==i].simtol_inn.mean())
+	man_std.append(man[man["klukkustund"]==i].simtol_inn.std())
+	tri_av.append(tri[tri["klukkustund"]==i].simtol_inn.mean())
+	tri_std.append(tri[tri["klukkustund"]==i].simtol_inn.std())
+	mid_av.append(mid[mid["klukkustund"]==i].simtol_inn.mean())
+	mid_std.append(mid[mid["klukkustund"]==i].simtol_inn.std())
+	fim_av.append(fim[fim["klukkustund"]==i].simtol_inn.mean())
+	fim_std.append(fim[fim["klukkustund"]==i].simtol_inn.std())
+	fos_av.append(fos[fos["klukkustund"]==i].simtol_inn.mean())
+	fos_std.append(fos[fos["klukkustund"]==i].simtol_inn.std())
+	lau_av.append(lau[lau["klukkustund"]==i].simtol_inn.mean())
+	lau_std.append(lau[lau["klukkustund"]==i].simtol_inn.std())
+	sun_av.append(sun[sun["klukkustund"]==i].simtol_inn.mean())
+	sun_std.append(sun[sun["klukkustund"]==i].simtol_inn.std())
+
+manudagar=Dagar(man)
+tridudagar=Dagar(tri)
+fostudagar=Dagar(fos)
+midvikudagar=Dagar(mid)
+fimmtudagar=Dagar(fim)
+laugardagar=Dagar(lau)
+sunnudagar=Dagar(sun)
+V=range(0,19)
+
+manudir=DagarM(Data)
+A=range(1,6)
+
+manu2=DagarM(man)
+tridu2=DagarM(tri)
+midviku2=DagarM(mid)
+fimmtu2=DagarM(fim)
+fostudag2=DagarM(fos)
+laugar2=DagarM(lau)
+sunnu2=DagarM(sun)
+
+
+Data=Data[Data["manudur"]<4]
+
+
+
+M=[];
+W=0;
+Date=[]
+vikudagar=[]
+
+for i in range(21,len(Data.index)):
+	W=W+Data.loc[i,"simtol_inn"]
+	if Data.loc[i,"klukkustund"]==21:
+		M.append(W)
+		W=0
+		Date.append(Data.loc[i,"simtol_inn"])
+		vikudagar.append(Data.loc[i,"dagur"])
+
+
+
+#weighted moving average, thetta fall aðalagast vel ad gognum. Ekki buinn ad na ad spa fram i timann
+#grunnurinn fenginn hedan
+#http://stackoverflow.com/questions/18517722/weighted-moving-average-in-python
+#Þurfti ad breyta thesssu adeins til ad fita betur ad okkur gognum
+#moving_average er fenginn a sama stad
+def weighted_moving_average(x,M,step_size=0.05,width=0.1):
+
+
+    bin_centers  = np.arange(np.min(x),np.max(x)-0.5*step_size,step_size)+0.5*step_size
+    bin_avg = np.zeros(len(bin_centers))
+
+    #Vigtin gerð með gauss
+    def gaussian(x,amp=1,mean=0,sigma=1):
+        return amp*np.exp(-(x-mean)**2/(0.8*sigma**2))
+
+    for i in range(0,len(bin_centers)):
+        bin_center = bin_centers[i]
+        weights = gaussian(x,mean=bin_center,sigma=width)
+        bin_avg[i] = np.average(M,weights=weights)
+
+    #for i in range(len(bin_centers),len(bin_centers)+14):
+    	
+
+    return (bin_centers,bin_avg)
+
+
+#moving average, þessi virkar en hafði hann bara með sem auka, vesteinn er að vinna i thessu
+#þessi spair ekki fram i timann, adlagast bara gognum
+def moving_average(x,MM,step_size=0.1,bin_size=1):
+    bin_centers  = np.arange(np.min(x),np.max(x)-0.5*step_size,step_size)+0.5*step_size
+    bin_avg = np.zeros(len(bin_centers))
+
+    for i in range(0,len(bin_centers)):
+        bin_center = bin_centers[i]
+        items_in_bin = MM[(x>(bin_center-bin_size*0.5) ) & (x<(bin_center+bin_size*0.5))]
+        bin_avg[i] = np.mean(items_in_bin)
+
+    return bin_centers,bin_avg
+
+
+x = range(0,len(M))
+xx = range(0,len(M)+14)
+
+
+
+MM = np.array(M) #thessi er ser bara fyrir moving_average. nae annars ekki ad plotta
+
+
+#plot the moving average
+bins, average = moving_average(x,MM)
+plt.plot(bins, average,label='moving average')
+
+#plot weigthed moving average
+wma, wma1 = weighted_moving_average(x,M,step_size=0.05,width=1)
+plt.plot(wma,wma1)
+
+#plot fyrir raungogn
+plt.plot(range(0,len(M)),M)
+plt.show()
