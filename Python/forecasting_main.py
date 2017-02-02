@@ -3,6 +3,30 @@ import pandas as pd
 import matplotlib.pylab as plt 
 import scipy.optimize as sci
 import math
+
+def Moving_Average(data,lengdspa):
+    spa=[]
+    F1=0
+    F2=0
+    F3=0
+    for i in range(21,len(data)+lengdspa):
+        if len(data)<(i-21):
+            F1=spa[i-21-21]    #ástæðan fyrir auka  -21 er að spá listinn er 21 staki styttri en gögnin
+        else:                   
+            F1=data[i-21]
+        if len(data)-1<(i-14):
+            F2=spa[i-14-21]
+        else:
+            F2=data[i-14]
+        if len(data)-1<(i-7):
+            F3=spa[i-7-21]
+        else:
+            F3=data[i-7]
+        spa.append((F1+F2+F3)/3)
+    return spa
+
+
+
 #heimagerð spá aðferð blanda af tveimur síðustu dögum og 3 sömu vikudögunum tekurinn gögn og hversu langt á að spá
 def heimagerd_spa(data,lengdspa):
     spa=[]
@@ -11,10 +35,13 @@ def heimagerd_spa(data,lengdspa):
     F3=0
     F4=0
     F5=0
+    #ástæða fyrir if og else súpu  hér fyrir neðan er að þegar komið er út fyrir gögninn við spá þá þarf að 
+    # nota spána til þess að spá áfram og spá listinn er 21 staki styttri en gögninn  af því að það þarf að hafa 
+    #þrjár vikur til þess að að geta byrjað að spá með þessari aðferð
     for i in range(21,len(data)+lengdspa):
         if len(data)<(i-21):
-            F1=spa[i-21-21]*0.05
-        else:
+            F1=spa[i-21-21]*0.05    #ástæðan fyrir auka  -21 er að spá listinn er 21 staki styttri en gögnin
+        else:                   
             F1=data[i-21]*0.05
         if len(data)-1<(i-14):
             F2=spa[i-14-21]*0.25
@@ -102,7 +129,7 @@ def Timavigt(Data):
     sun_av[:]=[x/su for x in sun_av]
 
     return (man_av, tri_av, mid_av, fim_av,fos_av,lau_av,sun_av)
-#fall sem notar spá, gögnin og dagana til þess að brjóta spá daginn yfir vinnudaginn
+#fall sem notar spá, gögnin og dagana til þess að dreifa spá  spáðum degi yfir vinnudaginn
 def dreifing_klst(Data,spa,gogndagar):
     (man,tri,mid,fim,fos,lau,sun)=Timavigt(Data)
     A=len(gogndagar)
@@ -126,7 +153,7 @@ def dreifing_klst(Data,spa,gogndagar):
     return(timar)
 
 #fall sem reikna MSRE
-def MSRE(M,spa):
+def MSE(M,spa):
     res=0
     for i in range(0,len(M)):
         res=res+math.sqrt((M[i]-spa[i])**2)
@@ -177,7 +204,7 @@ def triple_exponential_smoothing(data, x, alpha, beta, gamma, spa):
 
 
 Data = pd.DataFrame()
-Data=pd.read_excel('e:\likanX\DataA.xlsx', skiprows=3,parse_cols='B:P')  #skrá sett inn í pandas dataframe - athugið slóð að skrá er breytileg
+Data=pd.read_excel('c:\data\DataA.xlsx', skiprows=3,parse_cols='B:P')  #skrá sett inn í pandas dataframe - athugið slóð að skrá er breytileg
 
 #Breytum íslenskum stöfum í dálka nöfnum og línubil tekinn út 
 cols = Data.columns
@@ -211,46 +238,46 @@ for i in range(0,len(DataV.index)):
         Datafull.append(V)
         V=0
         vikudagur2.append(DataV.loc[i,"dagur"])
-alph=0.2
-beta=0.2
-gamma=0.2
 spalengd=14
-x=triple_exponential_smoothing(M,7,alph,beta,gamma,spalengd)
 Z=[0.2,0.2,0.2]
 
 res=sci.minimize(opti,Z, method='Nelder-Mead')
 Sopt=triple_exponential_smoothing(M,7,res.x[0],res.x[1],res.x[2],spalengd)
 err=(MSE(M,Sopt))
 
-plt.figure()
-plt.plot(range(0,len(M)),M,marker='o',linestyle='-')
 
-plt.plot(range(len(M),len(x)),x[len(M):], marker='o',linestyle='-',color='r')
-plt.title("firsta spá alpa=0,2, beta=0,2 gamma=0,2")
-
-
-plt.figure()
-
-plt.plot(range(0,len(Datafull)),Datafull,marker='o',linestyle='-')
-plt.errorbar(range(0,len(Sopt)),Sopt,yerr=err ,marker='o',linestyle='--')
-plt.title("lámörkuð MSE skekkja")
+#plt.figure()
+#
+#plt.plot(range(0,len(Datafull)),Datafull,marker='o',linestyle='-')
+#plt.errorbar(range(0,len(Sopt)),Sopt,yerr=err ,marker='o',linestyle='--')
+#plt.title("lámörkuð MSE skekkja")
 
 
 
-Tima_dreifing=dreifing_klst(Data,Sopt,vikudagur)
+Tima_dreifing_ExpS=dreifing_klst(Data,Sopt,vikudagur)
 titlestring='Þreföldveldisjöfnun:Símaálag yfir vinnudagin spá dagur nr: '
-for i in range(0,len(Tima_dreifing)):
+for i in range(0,len(Tima_dreifing_ExpS)):
     plt.figure()
-    plt.plot(range(9,len(Tima_dreifing[i])+9),Tima_dreifing[i])
+    plt.plot(range(9,len(Tima_dreifing_ExpS[i])+9),Tima_dreifing_ExpS[i])
     r=titlestring+ repr(i+1)
     plt.title(r)
     plt.axis([9,21,0, 120])
 plt.show()
 
+
 spahal=heimagerd_spa(M,spalengd)
 plt.figure
 errspah=MSE(M[21:],spahal)
-print(errspah)
+Tima_dreifing_HTS=dreifing_klst(Data,spahal,vikudagur)
 plt.plot(range(21,len(spahal)+21),spahal)
 plt.plot(range(0,len(Datafull)),Datafull)
+plt.show()
+titlestring='Heima tilbúinn spá:Símaálag yfir vinnudagin spá dagur nr: '
+print(Tima_dreifing_HTS)
+for i in range(0,len(Tima_dreifing_HTS)):
+    plt.figure()
+    plt.plot(range(9,len(Tima_dreifing_HTS[i])+9),Tima_dreifing_HTS[i])
+    r=titlestring+ repr(i+1)
+    plt.title(r)
+    plt.axis([9,21,0, 120])
 plt.show()
