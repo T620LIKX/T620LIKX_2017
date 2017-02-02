@@ -264,26 +264,10 @@ Z=[0.2,0.2,0.2]
 
 res=sci.minimize(opti,Z, method='Nelder-Mead')
 spa_TEXP=triple_exponential_smoothing(M,7,res.x[0],res.x[1],res.x[2],spalengd)
-err=(MSE(M,spa_TEXP))
 
 
-#plt.figure()
-#
-#plt.plot(range(0,len(Datafull)),Datafull,marker='o',linestyle='-')
-#plt.errorbar(range(0,len(Sopt)),Sopt,yerr=err ,marker='o',linestyle='--')
-#plt.title("lámörkuð MSE skekkja")
+Tima_dreifing_ExpS=dreifing_klst(Data,spa_TEXP,vikudagur)
 
-
-
-Tima_dreifing_ExpS=dreifing_klst(Data,Sopt,vikudagur)
-titlestring='Þreföldveldisjöfnun:Símaálag yfir vinnudagin spá dagur nr: '
-#for i in range(0,len(Tima_dreifing_ExpS)):
-#    plt.figure()
-#    plt.plot(range(9,len(Tima_dreifing_ExpS[i])+9),Tima_dreifing_ExpS[i])
-#    r=titlestring+ repr(i+1)
-#    plt.title(r)
-#    plt.axis([9,21,0, 120])
-#plt.show()
 
 
 spa_heima=heimagerd_spa(M,spalengd)
@@ -291,9 +275,17 @@ spa_MA=Moving_Average(M,spalengd)
 spa_WMA=weighted_Moving_Average(M,spalengd)
 err_heim=MSE(M[21:],spa_heima)
 err_MA=MSE(M[21:],spa_MA)
-err_WMA=MSE([21:],spa_WMA)
-plt.plot(range(21,len(spa_heima)+21),spa_heima)
-plt.plot(range(21,len(spa_MA)+21),spa_MA)
-plt.plot(range(21,len(spa_WMA)+21),spa_WMA)
-plt.plot(range(0,len(Datafull)),Datafull)
+err_WMA=MSE(M[21:],spa_WMA)
+err=(MSE(M,spa_TEXP))
+
+
+heima=plt.plot(range(21,len(spa_heima)+21),spa_heima,linestyle='--', label='line 1')
+Moving_A=plt.plot(range(21,len(spa_MA)+21),spa_MA,linestyle='--',label='line 2')
+W_M_A=plt.plot(range(21,len(spa_WMA)+21),spa_WMA,linestyle='--',label='line 3')
+TEXP=plt.plot(range(0,len(spa_TEXP)),spa_TEXP,linestyle='--',label='line 4')
+D=plt.plot(range(0,len(Datafull)),Datafull)
+
+plt.legend([heima,Moving_A,W_M_A,TEXP,D],['Heimagerð aðferd','Moving Average','Weighted MA','smoothing','Data'])
+
+
 plt.show()
