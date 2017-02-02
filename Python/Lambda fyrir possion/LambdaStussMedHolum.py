@@ -16,8 +16,7 @@ for i in L:
 		data[i] = data[i] + "-21"
 
 
-
-with open("DataMedholum.txt","wt") as myfile:
+with open("MedaltalIHollum.txt","wt") as myfile:
 	for i in L:
 		myfile.write(data[i])
 		myfile.write('|')
