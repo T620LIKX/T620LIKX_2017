@@ -6,34 +6,32 @@ import math
 
 def heimagerd_spa(data,lengdspa):
     spa=[]
-    v=0
     F1=0
     F2=0
     F3=0
     F4=0
     F5=0
-
     for i in range(21,len(data)+lengdspa):
-        if len(data)=<(i-21):
-            F1=spa[i-21]*0.1
-        else
-            F1=data[i-21]*0.1
-        if len(data)=<(i-14)
-            F2=spa[i-14]*0.25
-        else
+        if len(data)<(i-21):
+            F1=spa[i-21-21]*0.05
+        else:
+            F1=data[i-21]*0.05
+        if len(data)-1<(i-14):
+            F2=spa[i-14-21]*0.25
+        else:
             F2=data[i-14]*0.25
-        if len(data)=<(i-7)
-            F3=spa[i-7]*0.4
-        else
+        if len(data)-1<(i-7):
+            F3=spa[i-7-21]*0.4
+        else:
             F3=data[i-7]*0.4
-        if len(data)=<(i-1)
-            F4=spa[i-1]*0.15
-        else
-            F4=data[i-1]*0.15
-        if len(data)=<(i-2)
-            F2=spa[i-2]*0.1
-        else
-            F2=data[i-2]*0.1
+        if len(data)-1<(i-1):
+            F4=spa[i-1-21]*0.3
+        else:
+            F4=data[i-1]*0.3
+        if len(data)-1<(i-2):
+            F2=spa[i-2-21]*0.2
+        else:
+            F2=data[i-2]*0.2
         spa.append(F1+F2+F3+F4+F5)
     
 
@@ -214,11 +212,11 @@ alph=0.2
 beta=0.2
 gamma=0.2
 spalengd=14
-x=triple_exponential_smoothing(M,7,alph,beta,gamma,spa)
+x=triple_exponential_smoothing(M,7,alph,beta,gamma,spalengd)
 Z=[0.2,0.2,0.2]
 
 res=sci.minimize(opti,Z, method='Nelder-Mead')
-Sopt=triple_exponential_smoothing(M,7,res.x[0],res.x[1],res.x[2],spa)
+Sopt=triple_exponential_smoothing(M,7,res.x[0],res.x[1],res.x[2],spalengd)
 err=(MSE(M,Sopt))
 
 plt.figure()
@@ -246,10 +244,10 @@ for i in range(0,len(Tima_dreifing)):
     plt.axis([9,21,0, 120])
 plt.show()
 
-spahal=heimagerd_spa(M,spa)
+spahal=heimagerd_spa(M,spalengd)
 plt.figure
 errspah=MSE(M[21:],spahal)
-print=(errspah)
+print(errspah)
 plt.plot(range(21,len(spahal)+21),spahal)
 plt.plot(range(0,len(Datafull)),Datafull)
 plt.show()
