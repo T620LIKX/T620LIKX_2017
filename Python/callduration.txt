@@ -4,18 +4,18 @@ max(medaltaltimi), max(lengsta_simtal),min(medaltaltimi), min(lengsta_simtal)
   group by klukkustund
   order by klukkustund asc;
 
-  SELECT  dagur, avg(medaltaltimi), avg(lengsta_simtal),
+SELECT  dagur, avg(medaltaltimi), avg(lengsta_simtal),
 max(medaltaltimi), max(lengsta_simtal),min(medaltaltimi), min(lengsta_simtal)
   FROM data
   group by dagur;
 
-  SELECT vikunumer, avg(medaltaltimi), avg(lengsta_simtal),
+SELECT vikunumer, avg(medaltaltimi), avg(lengsta_simtal),
 max(medaltaltimi), max(lengsta_simtal),min(medaltaltimi), min(lengsta_simtal)
   FROM data
   group by vikunumer
   order by vikunumer asc;
 
-  SELECT manudur, avg(medaltaltimi), avg(lengsta_simtal),
+SELECT manudur, avg(medaltaltimi), avg(lengsta_simtal),
 max(medaltaltimi), max(lengsta_simtal),min(medaltaltimi), min(lengsta_simtal)
   FROM data
   group by manudur
