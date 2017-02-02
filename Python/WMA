@@ -3,6 +3,8 @@ import pandas as pd
 import matplotlib.pylab as plt 
 from scipy.signal import fftconvolve as fc
 
+#shittid fra mer byrjar a linu 120
+
 
 def Dagar(gogn):
 	res=[]
