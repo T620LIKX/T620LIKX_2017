@@ -4,15 +4,39 @@ import matplotlib.pylab as plt
 import scipy.optimize as sci
 import math
 
-def heimagerd_spa(data):
+def heimagerd_spa(data,lengdspa):
     spa=[]
     v=0
-    for i in range(21,len(data)):
-        v=data[i-14]*0.15+data[i-7]*0.3+data[i-21]*0.10+data[i-1]*0.25+data[i-2]*0.20
-        spa.append(v)
-        v=0
-    for i in range(len(spa),len(spa)+14):
-        spa.append(spa[i-14]*0.15+spa[i-7]*0.3+spa[i-21]*0.10+spa[i-1]*0.25+spa[i-2]*0.20)
+    F1=0
+    F2=0
+    F3=0
+    F4=0
+    F5=0
+
+    for i in range(21,len(data)+lengdspa):
+        if len(data)=<(i-21):
+            F1=spa[i-21]*0.1
+        else
+            F1=data[i-21]*0.1
+        if len(data)=<(i-14)
+            F2=spa[i-14]*0.25
+        else
+            F2=data[i-14]*0.25
+        if len(data)=<(i-7)
+            F3=spa[i-7]*0.4
+        else
+            F3=data[i-7]*0.4
+        if len(data)=<(i-1)
+            F4=spa[i-1]*0.15
+        else
+            F4=data[i-1]*0.15
+        if len(data)=<(i-2)
+            F2=spa[i-2]*0.1
+        else
+            F2=data[i-2]*0.1
+        spa.append(F1+F2+F3+F4+F5)
+    
+
     return spa
 def opti(x):
     spa=triple_exponential_smoothing(M,7,x[0],x[1],x[2],14)
@@ -186,12 +210,11 @@ for i in range(0,len(DataV.index)):
         Datafull.append(V)
         V=0
         vikudagur2.append(DataV.loc[i,"dagur"])
-lengd=7
 alph=0.2
 beta=0.2
 gamma=0.2
-spa=14
-x=triple_exponential_smoothing(M,lengd,alph,beta,gamma,spa)
+spalengd=14
+x=triple_exponential_smoothing(M,7,alph,beta,gamma,spa)
 Z=[0.2,0.2,0.2]
 
 res=sci.minimize(opti,Z, method='Nelder-Mead')
@@ -223,7 +246,7 @@ for i in range(0,len(Tima_dreifing)):
     plt.axis([9,21,0, 120])
 plt.show()
 
-spahal=heimagerd_spa(M)
+spahal=heimagerd_spa(M,spa)
 plt.figure
 errspah=MSE(M[21:],spahal)
 print=(errspah)
