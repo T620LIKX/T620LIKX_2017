@@ -9,6 +9,7 @@ def Moving_Average(data,lengdspa):
     F1=0
     F2=0
     F3=0
+    # ef dagur er ekki til í gögnum þá notum við spána til að "svindla"
     for i in range(21,len(data)+lengdspa):
         if len(data)<(i-21):
             F1=spa[i-21-21]    #ástæðan fyrir auka  -21 er að spá listinn er 21 staki styttri en gögnin
@@ -24,7 +25,27 @@ def Moving_Average(data,lengdspa):
             F3=data[i-7]
         spa.append((F1+F2+F3)/3)
     return spa
-
+def weighted_Moving_Average(data,lengdspa):
+    spa=[]
+    F1=0
+    F2=0
+    F3=0
+    # ef dagur er ekki til í gögnum þá notum við spána til að "svindla"
+    for i in range(21,len(data)+lengdspa):
+        if len(data)<(i-21):
+            F1=spa[i-21-21]*0.2    #ástæðan fyrir auka  -21 er að spá listinn er 21 staki styttri en gögnin
+        else:                   
+            F1=data[i-21]*0.2
+        if len(data)-1<(i-14):
+            F2=spa[i-14-21]*0.3
+        else:
+            F2=data[i-14]*0.3
+        if len(data)-1<(i-7):
+            F3=spa[i-7-21]*0.5
+        else:
+            F3=data[i-7]*0.5
+        spa.append((F1+F2+F3))
+    return spa
 
 
 #heimagerð spá aðferð blanda af tveimur síðustu dögum og 3 sömu vikudögunum tekurinn gögn og hversu langt á að spá
@@ -204,7 +225,7 @@ def triple_exponential_smoothing(data, x, alpha, beta, gamma, spa):
 
 
 Data = pd.DataFrame()
-Data=pd.read_excel('c:\data\DataA.xlsx', skiprows=3,parse_cols='B:P')  #skrá sett inn í pandas dataframe - athugið slóð að skrá er breytileg
+Data=pd.read_excel('E:\likanX\DataA.xlsx', skiprows=3,parse_cols='B:P')  #skrá sett inn í pandas dataframe - athugið slóð að skrá er breytileg
 
 #Breytum íslenskum stöfum í dálka nöfnum og línubil tekinn út 
 cols = Data.columns
@@ -242,8 +263,8 @@ spalengd=14
 Z=[0.2,0.2,0.2]
 
 res=sci.minimize(opti,Z, method='Nelder-Mead')
-Sopt=triple_exponential_smoothing(M,7,res.x[0],res.x[1],res.x[2],spalengd)
-err=(MSE(M,Sopt))
+spa_TEXP=triple_exponential_smoothing(M,7,res.x[0],res.x[1],res.x[2],spalengd)
+err=(MSE(M,spa_TEXP))
 
 
 #plt.figure()
@@ -256,28 +277,23 @@ err=(MSE(M,Sopt))
 
 Tima_dreifing_ExpS=dreifing_klst(Data,Sopt,vikudagur)
 titlestring='Þreföldveldisjöfnun:Símaálag yfir vinnudagin spá dagur nr: '
-for i in range(0,len(Tima_dreifing_ExpS)):
-    plt.figure()
-    plt.plot(range(9,len(Tima_dreifing_ExpS[i])+9),Tima_dreifing_ExpS[i])
-    r=titlestring+ repr(i+1)
-    plt.title(r)
-    plt.axis([9,21,0, 120])
-plt.show()
+#for i in range(0,len(Tima_dreifing_ExpS)):
+#    plt.figure()
+#    plt.plot(range(9,len(Tima_dreifing_ExpS[i])+9),Tima_dreifing_ExpS[i])
+#    r=titlestring+ repr(i+1)
+#    plt.title(r)
+#    plt.axis([9,21,0, 120])
+#plt.show()
 
 
-spahal=heimagerd_spa(M,spalengd)
-plt.figure
-errspah=MSE(M[21:],spahal)
-Tima_dreifing_HTS=dreifing_klst(Data,spahal,vikudagur)
-plt.plot(range(21,len(spahal)+21),spahal)
+spa_heima=heimagerd_spa(M,spalengd)
+spa_MA=Moving_Average(M,spalengd)
+spa_WMA=weighted_Moving_Average(M,spalengd)
+err_heim=MSE(M[21:],spa_heima)
+err_MA=MSE(M[21:],spa_MA)
+err_WMA=MSE([21:],spa_WMA)
+plt.plot(range(21,len(spa_heima)+21),spa_heima)
+plt.plot(range(21,len(spa_MA)+21),spa_MA)
+plt.plot(range(21,len(spa_WMA)+21),spa_WMA)
 plt.plot(range(0,len(Datafull)),Datafull)
-plt.show()
-titlestring='Heima tilbúinn spá:Símaálag yfir vinnudagin spá dagur nr: '
-print(Tima_dreifing_HTS)
-for i in range(0,len(Tima_dreifing_HTS)):
-    plt.figure()
-    plt.plot(range(9,len(Tima_dreifing_HTS[i])+9),Tima_dreifing_HTS[i])
-    r=titlestring+ repr(i+1)
-    plt.title(r)
-    plt.axis([9,21,0, 120])
 plt.show()
