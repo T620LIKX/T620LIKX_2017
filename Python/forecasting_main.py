@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib.pylab as plt 
 import scipy.optimize as sci
 import math
-
+#heimagerð spá aðferð blanda af tveimur síðustu dögum og 3 sömu vikudögunum tekurinn gögn og hversu langt á að spá
 def heimagerd_spa(data,lengdspa):
     spa=[]
     F1=0
@@ -36,11 +36,12 @@ def heimagerd_spa(data,lengdspa):
     
 
     return spa
+#Fall sem hjálpar til við að besta stuðlana fyrir þrefalda veldisjöfnun
 def opti(x):
     spa=triple_exponential_smoothing(M,7,x[0],x[1],x[2],14)
 
     return(MSE(M,spa))
-
+#Fall sem býr finnur hvaða vikudaga er spáð fyrir fram í tíman
 def viku_dagar(spa,gogndagar):
     for i in range(len(gogndagar),len(spa)): 
         if  gogndagar[i-1]=='man':
@@ -58,6 +59,7 @@ def viku_dagar(spa,gogndagar):
         if gogndagar[i-1]=='sun':
             gogndagar.append('man')
     return (gogndagar)
+#fall sem Tekur inn gögnin og býr til vigt fyrir hverja vinnustund á hverjum vikudegi 
 def Timavigt(Data):
     man=Data[Data["dagur"] =='man']
     tri=Data[Data["dagur"] =='tri']
@@ -100,6 +102,7 @@ def Timavigt(Data):
     sun_av[:]=[x/su for x in sun_av]
 
     return (man_av, tri_av, mid_av, fim_av,fos_av,lau_av,sun_av)
+#fall sem notar spá, gögnin og dagana til þess að brjóta spá daginn yfir vinnudaginn
 def dreifing_klst(Data,spa,gogndagar):
     (man,tri,mid,fim,fos,lau,sun)=Timavigt(Data)
     A=len(gogndagar)
@@ -122,8 +125,8 @@ def dreifing_klst(Data,spa,gogndagar):
             timar.append([x*spa[i] for x in sun])
     return(timar)
 
-
-def MSE(M,spa):
+#fall sem reikna MSRE
+def MSRE(M,spa):
     res=0
     for i in range(0,len(M)):
         res=res+math.sqrt((M[i]-spa[i])**2)
