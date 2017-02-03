@@ -68,13 +68,11 @@ def best_forecast(data,spalengd):
         return (spa_TEXP)
 
 def set_dates(data):
-    start_date=20160101
-    stop_date=20160630
     print('sláðu inn mörk tímabilsins sem athugið að það þarf að vera á milli 20160101 og 20160630 og að minstakosti 21 dagur:')
     start_date=input("sláðu inn upphaf tímabils:")
     stop_date=input("sláðu inn lok tímabilsins:")
-    data=data[data["dagsetning"]>int(20160101)]
-    data=data[data["dagsetning"]<int(20160630)]
+    data=data[data["dagsetning"]>int(start_date)]
+    data=data[data["dagsetning"]<int(stop_date)]
     calls_inn,Date,weekday=Config_data(data)
     if len(calls_inn)<21:
         print("Villa:tímabil var styttra en 21 dagur ")
@@ -269,7 +267,7 @@ def dreifing_klst(spa,dagar,man,tri,mid,fim,fos,lau,sun):
     for i in range(0,len(timar)):
         plt.figure()
         plt.plot(range(9,len(timar[i])+9),timar[i])
-        r=titlestring+ repr(i+1)
+        r=titlestring+ repr(i+1)+' '+repri(dagar)
         plt.title(r)
         plt.axis([9,21,0, 300])
 
@@ -337,11 +335,11 @@ dag = Data.dagur
 dag =dag.map(lambda x: x.replace('ö','o').replace('á','a').replace('ð','d').replace('þ','t'))
 Data.dagur=dag
 DataV=Data
-
+#spalengd=int(input('Hvað á að spá fyrir marga daga fram í tíman:'))
 (man,tri,mid,fim,fos,lau,sun)=Timavigt(DataV)
 (M,date,vikudagur)=set_dates(Data)
 spalengd=14
-#spalengd=int(input('Hvað á að spá fyrir marga daga fram í tíman:'))
+
 spa_dagar=viku_dagar(vikudagur[-1],spalengd)
 
 
