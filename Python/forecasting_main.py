@@ -267,9 +267,9 @@ def dreifing_klst(spa,dagar,man,tri,mid,fim,fos,lau,sun):
     for i in range(0,len(timar)):
         plt.figure()
         plt.plot(range(9,len(timar[i])+9),timar[i])
-        r=titlestring+ repr(i+1)+' '+repri(dagar)
+        r=titlestring+ repr(i+1)+' '+repr(dagar[i])
         plt.title(r)
-        plt.axis([9,21,0, 300])
+        plt.axis([9,21,0, 250])
 
 
 #fall sem reiknar MSRE
