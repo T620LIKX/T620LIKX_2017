@@ -1,0 +1,336 @@
+select avg(d.simtol_inn) as "QUERY (man, 9)" from data d where
+d.klukkustund = 9 group by d.dagur
+having d.dagur = 'man'; 
+
+select avg(d.simtol_inn) as "QUERY (man, 10)" from data d where
+d.klukkustund = 10 group by d.dagur
+having d.dagur = 'man'; 
+
+select avg(d.simtol_inn) as "QUERY (man, 11)" from data d where
+d.klukkustund = 11 group by d.dagur
+having d.dagur = 'man'; 
+
+select avg(d.simtol_inn) as "QUERY (man, 12)" from data d where
+d.klukkustund = 12 group by d.dagur
+having d.dagur = 'man'; 
+
+select avg(d.simtol_inn) as "QUERY (man, 13)" from data d where
+d.klukkustund = 13 group by d.dagur
+having d.dagur = 'man'; 
+
+select avg(d.simtol_inn) as "QUERY (man, 14)" from data d where
+d.klukkustund = 14 group by d.dagur
+having d.dagur = 'man'; 
+
+select avg(d.simtol_inn) as "QUERY (man, 15)" from data d where
+d.klukkustund = 15 group by d.dagur
+having d.dagur = 'man'; 
+
+select avg(d.simtol_inn) as "QUERY (man, 16)" from data d where
+d.klukkustund = 16 group by d.dagur
+having d.dagur = 'man'; 
+
+select avg(d.simtol_inn) as "QUERY (man, 17)" from data d where
+d.klukkustund = 17 group by d.dagur
+having d.dagur = 'man'; 
+
+select avg(d.simtol_inn) as "QUERY (man, 18)" from data d where
+d.klukkustund = 18 group by d.dagur
+having d.dagur = 'man'; 
+
+select avg(d.simtol_inn) as "QUERY (man, 19)" from data d where
+d.klukkustund = 19 group by d.dagur
+having d.dagur = 'man'; 
+
+select avg(d.simtol_inn) as "QUERY (man, 20)" from data d where
+d.klukkustund = 20 group by d.dagur
+having d.dagur = 'man'; 
+
+select avg(d.simtol_inn) as "QUERY (tri, 9)" from data d where
+d.klukkustund = 9 group by d.dagur
+having d.dagur = 'tri'; 
+
+select avg(d.simtol_inn) as "QUERY (tri, 10)" from data d where
+d.klukkustund = 10 group by d.dagur
+having d.dagur = 'tri'; 
+
+select avg(d.simtol_inn) as "QUERY (tri, 11)" from data d where
+d.klukkustund = 11 group by d.dagur
+having d.dagur = 'tri'; 
+
+select avg(d.simtol_inn) as "QUERY (tri, 12)" from data d where
+d.klukkustund = 12 group by d.dagur
+having d.dagur = 'tri'; 
+
+select avg(d.simtol_inn) as "QUERY (tri, 13)" from data d where
+d.klukkustund = 13 group by d.dagur
+having d.dagur = 'tri'; 
+
+select avg(d.simtol_inn) as "QUERY (tri, 14)" from data d where
+d.klukkustund = 14 group by d.dagur
+having d.dagur = 'tri'; 
+
+select avg(d.simtol_inn) as "QUERY (tri, 15)" from data d where
+d.klukkustund = 15 group by d.dagur
+having d.dagur = 'tri'; 
+
+select avg(d.simtol_inn) as "QUERY (tri, 16)" from data d where
+d.klukkustund = 16 group by d.dagur
+having d.dagur = 'tri'; 
+
+select avg(d.simtol_inn) as "QUERY (tri, 17)" from data d where
+d.klukkustund = 17 group by d.dagur
+having d.dagur = 'tri'; 
+
+select avg(d.simtol_inn) as "QUERY (tri, 18)" from data d where
+d.klukkustund = 18 group by d.dagur
+having d.dagur = 'tri'; 
+
+select avg(d.simtol_inn) as "QUERY (tri, 19)" from data d where
+d.klukkustund = 19 group by d.dagur
+having d.dagur = 'tri'; 
+
+select avg(d.simtol_inn) as "QUERY (tri, 20)" from data d where
+d.klukkustund = 20 group by d.dagur
+having d.dagur = 'tri'; 
+
+select avg(d.simtol_inn) as "QUERY (mid, 9)" from data d where
+d.klukkustund = 9 group by d.dagur
+having d.dagur = 'mid'; 
+
+select avg(d.simtol_inn) as "QUERY (mid, 10)" from data d where
+d.klukkustund = 10 group by d.dagur
+having d.dagur = 'mid'; 
+
+select avg(d.simtol_inn) as "QUERY (mid, 11)" from data d where
+d.klukkustund = 11 group by d.dagur
+having d.dagur = 'mid'; 
+
+select avg(d.simtol_inn) as "QUERY (mid, 12)" from data d where
+d.klukkustund = 12 group by d.dagur
+having d.dagur = 'mid'; 
+
+select avg(d.simtol_inn) as "QUERY (mid, 13)" from data d where
+d.klukkustund = 13 group by d.dagur
+having d.dagur = 'mid'; 
+
+select avg(d.simtol_inn) as "QUERY (mid, 14)" from data d where
+d.klukkustund = 14 group by d.dagur
+having d.dagur = 'mid'; 
+
+select avg(d.simtol_inn) as "QUERY (mid, 15)" from data d where
+d.klukkustund = 15 group by d.dagur
+having d.dagur = 'mid'; 
+
+select avg(d.simtol_inn) as "QUERY (mid, 16)" from data d where
+d.klukkustund = 16 group by d.dagur
+having d.dagur = 'mid'; 
+
+select avg(d.simtol_inn) as "QUERY (mid, 17)" from data d where
+d.klukkustund = 17 group by d.dagur
+having d.dagur = 'mid'; 
+
+select avg(d.simtol_inn) as "QUERY (mid, 18)" from data d where
+d.klukkustund = 18 group by d.dagur
+having d.dagur = 'mid'; 
+
+select avg(d.simtol_inn) as "QUERY (mid, 19)" from data d where
+d.klukkustund = 19 group by d.dagur
+having d.dagur = 'mid'; 
+
+select avg(d.simtol_inn) as "QUERY (mid, 20)" from data d where
+d.klukkustund = 20 group by d.dagur
+having d.dagur = 'mid'; 
+
+select avg(d.simtol_inn) as "QUERY (fim, 9)" from data d where
+d.klukkustund = 9 group by d.dagur
+having d.dagur = 'fim'; 
+
+select avg(d.simtol_inn) as "QUERY (fim, 10)" from data d where
+d.klukkustund = 10 group by d.dagur
+having d.dagur = 'fim'; 
+
+select avg(d.simtol_inn) as "QUERY (fim, 11)" from data d where
+d.klukkustund = 11 group by d.dagur
+having d.dagur = 'fim'; 
+
+select avg(d.simtol_inn) as "QUERY (fim, 12)" from data d where
+d.klukkustund = 12 group by d.dagur
+having d.dagur = 'fim'; 
+
+select avg(d.simtol_inn) as "QUERY (fim, 13)" from data d where
+d.klukkustund = 13 group by d.dagur
+having d.dagur = 'fim'; 
+
+select avg(d.simtol_inn) as "QUERY (fim, 14)" from data d where
+d.klukkustund = 14 group by d.dagur
+having d.dagur = 'fim'; 
+
+select avg(d.simtol_inn) as "QUERY (fim, 15)" from data d where
+d.klukkustund = 15 group by d.dagur
+having d.dagur = 'fim'; 
+
+select avg(d.simtol_inn) as "QUERY (fim, 16)" from data d where
+d.klukkustund = 16 group by d.dagur
+having d.dagur = 'fim'; 
+
+select avg(d.simtol_inn) as "QUERY (fim, 17)" from data d where
+d.klukkustund = 17 group by d.dagur
+having d.dagur = 'fim'; 
+
+select avg(d.simtol_inn) as "QUERY (fim, 18)" from data d where
+d.klukkustund = 18 group by d.dagur
+having d.dagur = 'fim'; 
+
+select avg(d.simtol_inn) as "QUERY (fim, 19)" from data d where
+d.klukkustund = 19 group by d.dagur
+having d.dagur = 'fim'; 
+
+select avg(d.simtol_inn) as "QUERY (fim, 20)" from data d where
+d.klukkustund = 20 group by d.dagur
+having d.dagur = 'fim'; 
+
+select avg(d.simtol_inn) as "QUERY (fos, 9)" from data d where
+d.klukkustund = 9 group by d.dagur
+having d.dagur = 'fos'; 
+
+select avg(d.simtol_inn) as "QUERY (fos, 10)" from data d where
+d.klukkustund = 10 group by d.dagur
+having d.dagur = 'fos'; 
+
+select avg(d.simtol_inn) as "QUERY (fos, 11)" from data d where
+d.klukkustund = 11 group by d.dagur
+having d.dagur = 'fos'; 
+
+select avg(d.simtol_inn) as "QUERY (fos, 12)" from data d where
+d.klukkustund = 12 group by d.dagur
+having d.dagur = 'fos'; 
+
+select avg(d.simtol_inn) as "QUERY (fos, 13)" from data d where
+d.klukkustund = 13 group by d.dagur
+having d.dagur = 'fos'; 
+
+select avg(d.simtol_inn) as "QUERY (fos, 14)" from data d where
+d.klukkustund = 14 group by d.dagur
+having d.dagur = 'fos'; 
+
+select avg(d.simtol_inn) as "QUERY (fos, 15)" from data d where
+d.klukkustund = 15 group by d.dagur
+having d.dagur = 'fos'; 
+
+select avg(d.simtol_inn) as "QUERY (fos, 16)" from data d where
+d.klukkustund = 16 group by d.dagur
+having d.dagur = 'fos'; 
+
+select avg(d.simtol_inn) as "QUERY (fos, 17)" from data d where
+d.klukkustund = 17 group by d.dagur
+having d.dagur = 'fos'; 
+
+select avg(d.simtol_inn) as "QUERY (fos, 18)" from data d where
+d.klukkustund = 18 group by d.dagur
+having d.dagur = 'fos'; 
+
+select avg(d.simtol_inn) as "QUERY (fos, 19)" from data d where
+d.klukkustund = 19 group by d.dagur
+having d.dagur = 'fos'; 
+
+select avg(d.simtol_inn) as "QUERY (fos, 20)" from data d where
+d.klukkustund = 20 group by d.dagur
+having d.dagur = 'fos'; 
+
+select avg(d.simtol_inn) as "QUERY (lau, 9)" from data d where
+d.klukkustund = 9 group by d.dagur
+having d.dagur = 'lau'; 
+
+select avg(d.simtol_inn) as "QUERY (lau, 10)" from data d where
+d.klukkustund = 10 group by d.dagur
+having d.dagur = 'lau'; 
+
+select avg(d.simtol_inn) as "QUERY (lau, 11)" from data d where
+d.klukkustund = 11 group by d.dagur
+having d.dagur = 'lau'; 
+
+select avg(d.simtol_inn) as "QUERY (lau, 12)" from data d where
+d.klukkustund = 12 group by d.dagur
+having d.dagur = 'lau'; 
+
+select avg(d.simtol_inn) as "QUERY (lau, 13)" from data d where
+d.klukkustund = 13 group by d.dagur
+having d.dagur = 'lau'; 
+
+select avg(d.simtol_inn) as "QUERY (lau, 14)" from data d where
+d.klukkustund = 14 group by d.dagur
+having d.dagur = 'lau'; 
+
+select avg(d.simtol_inn) as "QUERY (lau, 15)" from data d where
+d.klukkustund = 15 group by d.dagur
+having d.dagur = 'lau'; 
+
+select avg(d.simtol_inn) as "QUERY (lau, 16)" from data d where
+d.klukkustund = 16 group by d.dagur
+having d.dagur = 'lau'; 
+
+select avg(d.simtol_inn) as "QUERY (lau, 17)" from data d where
+d.klukkustund = 17 group by d.dagur
+having d.dagur = 'lau'; 
+
+select avg(d.simtol_inn) as "QUERY (lau, 18)" from data d where
+d.klukkustund = 18 group by d.dagur
+having d.dagur = 'lau'; 
+
+select avg(d.simtol_inn) as "QUERY (lau, 19)" from data d where
+d.klukkustund = 19 group by d.dagur
+having d.dagur = 'lau'; 
+
+select avg(d.simtol_inn) as "QUERY (lau, 20)" from data d where
+d.klukkustund = 20 group by d.dagur
+having d.dagur = 'lau'; 
+
+select avg(d.simtol_inn) as "QUERY (sun, 9)" from data d where
+d.klukkustund = 9 group by d.dagur
+having d.dagur = 'sun'; 
+
+select avg(d.simtol_inn) as "QUERY (sun, 10)" from data d where
+d.klukkustund = 10 group by d.dagur
+having d.dagur = 'sun'; 
+
+select avg(d.simtol_inn) as "QUERY (sun, 11)" from data d where
+d.klukkustund = 11 group by d.dagur
+having d.dagur = 'sun'; 
+
+select avg(d.simtol_inn) as "QUERY (sun, 12)" from data d where
+d.klukkustund = 12 group by d.dagur
+having d.dagur = 'sun'; 
+
+select avg(d.simtol_inn) as "QUERY (sun, 13)" from data d where
+d.klukkustund = 13 group by d.dagur
+having d.dagur = 'sun'; 
+
+select avg(d.simtol_inn) as "QUERY (sun, 14)" from data d where
+d.klukkustund = 14 group by d.dagur
+having d.dagur = 'sun'; 
+
+select avg(d.simtol_inn) as "QUERY (sun, 15)" from data d where
+d.klukkustund = 15 group by d.dagur
+having d.dagur = 'sun'; 
+
+select avg(d.simtol_inn) as "QUERY (sun, 16)" from data d where
+d.klukkustund = 16 group by d.dagur
+having d.dagur = 'sun'; 
+
+select avg(d.simtol_inn) as "QUERY (sun, 17)" from data d where
+d.klukkustund = 17 group by d.dagur
+having d.dagur = 'sun'; 
+
+select avg(d.simtol_inn) as "QUERY (sun, 18)" from data d where
+d.klukkustund = 18 group by d.dagur
+having d.dagur = 'sun'; 
+
+select avg(d.simtol_inn) as "QUERY (sun, 19)" from data d where
+d.klukkustund = 19 group by d.dagur
+having d.dagur = 'sun'; 
+
+select avg(d.simtol_inn) as "QUERY (sun, 20)" from data d where
+d.klukkustund = 20 group by d.dagur
+having d.dagur = 'sun'; 
+
