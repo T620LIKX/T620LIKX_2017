@@ -46,27 +46,29 @@ def service(ID,service_start,callduration,status):
    customer_service = {'ID':ID,'service start':service_start,'status':status,'service end':service_start+callduration}
    return (customer_service)
 
-def find_staff(listinn): #tekur inn ListOfStaff listann
+def find_staff():
 #þessi forlykkja fer í gegnum listan staff finnur dict fyrir einn starfsmann og skilar id fyrir starfsmann ef hann er laus
-   for i, x in enumerate(listinn):
-      check=x.get('Idel')
-      if check =='yes':
-         staff_id=x.get('StaffId')
-         return((staff_id))
+   for  x in enumerate(ListOfStaff): #kalla í listan af starfsfólki
+      if x.get('Idel') =='yes':
+         return(x.get('StaffId')) #skila staffid
       else:
          return()#allir starfsmennuppteknir hvað þá ?
 
-def find_next_phonecall(listinn): #tekur inn simtol listann
+def find_next_phonecall(): 
 #þessi forlykkja fer í gegnum listan simtol finnur dict fyrir eitt simtal og skilar id fyrir símtali ef simtal er í bið
-   for i, x in enumerate(listinn):
-      check=x.get('stada')
-      if check =='waiting':
-         simtal_id=x.get('ID')
-         return((simtal_id))
+   for x in enumerate(simtol):#kalla í listan af símtölunum
+      
+      if x.get('stada') =='waiting':
+         return(x.get('ID'))# skilar simtal id
       else:
          return() # ekkert símtal í bið hvað þá ?
 
-#def set_employer_call():
+def set_employer_call():
+   next_phonecall=find_next_phonecall(simtol)
+   free_staff=find_staff(ListOfStaff)
+   []
+
+
 
 
 ID=0
