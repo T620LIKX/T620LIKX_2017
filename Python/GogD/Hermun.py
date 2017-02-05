@@ -13,12 +13,12 @@ def UpdateClock(n):
 	global clock
 	clock = clock + n
 
-def StartDay(GeneralInfo):
+def StartDay():
 	"""
-	Fall sem "opnar" innhringiverið og biður notendan að stilla upp vaktaplaninu og skilar
-	út lista af starfsmönnunum.
+	Fall sem "opnar" innhringiverið og biður notendan að stilla upp vaktaplaninu á starfsmönnunum og skilar
+	út lista af dictonarys af starfsmönnunum.
 	"""
-	
+
 	global clock
 	clock = 0 #Núllstillir klukkuna.
 
@@ -46,7 +46,7 @@ def nytt_simtal(ID,simtal_inn):
 
 	lengd_simtal= int(np.random.exponential(scale=100, size=None)) # beta =100 parameter fyrir exponential 1/landa
 
-	simtal = {"ID": ID, 'lengd_simtals':lengd_simtal,'status': "A", 'simtal_inn': simtal_inn, 'simtal_lokid': (simtal_inn+lengd_simtal)}
+	simtal = {"ID": ID, 'status': "A", 'lengd_simtals':lengd_simtal, 'simtal_inn': simtal_inn, 'simtal_lokid': 0}
 	return (simtal);
 
 def GeneratePhoneCalls():
@@ -63,24 +63,22 @@ def GeneratePhoneCalls():
 		simtol.append(simtal) #búa til lista með öllum símtölunum
 	return simtol;
 
-def UpdateStatus(ListOfPhoneCalls):
+def UpdateStatus():
 	for i in ListOfPhoneCalls:
 		if i["simtal_inn"] <= clock:
 			i["status"] = "B"
 
+
 #------------------------------------------------------------------------------------------------------------------------------------
 
-ListOfStaff = StartDay(GeneralInfo)
-
+ListOfStaff = StartDay()
 ListOfPhoneCalls = GeneratePhoneCalls()
 
-#print(ListOfStaff)
-#print(ListOfPhoneCalls)
-#for i in ListOfPhoneCalls:
-#	print(i)
+while clock <= GeneralInfo["CloseAt"]:
+	#print(clock)
+	UpdateStatus()
+	UpdateClock(1)
 
-UpdateStatus(ListOfPhoneCalls)
-#print('l=========================')
-#for i in ListOfPhoneCalls:
-#	print(i)
 
+for i in ListOfPhoneCalls:
+	print(i)
