@@ -3,6 +3,141 @@ import pandas as pd
 import matplotlib.pylab as plt 
 import scipy.optimize as sci
 import math
+#velur aðferð til að spá ef bestu aðferð, besta aðferð er skilgreind sem sú spá sem hefur lægsta MSRE á milli gagnasets og spágilda.
+def select_forecast(M, spalengd):
+
+    print('sláðu inn 1 til að finna bestu spáaðferð')
+    print('sláðu inn 2 til að spá með Heimagerðri spáaðferð')
+    print('sláðu inn 3 til að spá með hreifið meðaltal')
+    print('sláðu inn 4 til að spá með veigið hreifið meðaltal')
+    print('sláðu inn 5 til að spá með þreföld veldisjöfnun')
+    Mo=int(input())
+    if Mo==1:
+        return(best_forecast(M,spalengd))
+    if Mo==2:
+        spa_heima=heimagerd_spa(M,spalengd)
+        plt.plot(range(21,len(spa_heima)+21),spa_heima,linestyle='--')
+        plt.title('Heimagerð spáaðferð gaf besta niðustöðu')
+        return(spa_heima)
+    if Mo==3:
+        spa_MA=Moving_Average(M,spalengd)
+        plt.plot(range(21,len(spa_MA)+21),spa_MA,linestyle='--')
+        plt.title('Hreifið meðaltal gaf besta niðustöðu')
+        return(spa_MA)
+    if Mo==4:
+        spa_WMA=weighted_Moving_Average(M,spalengd)
+        plt.plot(range(21,len(spa_WMA)+21),spa_WMA,linestyle='--')
+        return(spa_WMA)
+    if Mo==5:
+        Z=[0.2,0.2,0.2]
+        res=sci.minimize(opti,Z, method='Nelder-Mead')
+        spa_TEXP=triple_exponential_smoothing(M,7,res.x[0],res.x[1],res.x[2],spalengd)
+        plt.plot(range(0,len(spa_TEXP)),spa_TEXP,linestyle='--')
+        return(spa_TEXP)
+#fall sem finnur þá spá aðferð sem gefur lægsta MRSE skekkju.
+def best_forecast(data,spalengd):
+    M=data
+    Z=[0.2,0.2,0.2]
+    res=sci.minimize(opti,Z, method='Nelder-Mead')
+    spa_TEXP=triple_exponential_smoothing(M,7,res.x[0],res.x[1],res.x[2],spalengd)
+    spa_heima=heimagerd_spa(M,spalengd)
+    spa_MA=Moving_Average(M,spalengd)
+    spa_WMA=weighted_Moving_Average(M,spalengd)
+    
+    err_heim=MSE(M[21:],spa_heima)
+    err_MA=MSE(M[21:],spa_MA)
+    err_WMA=MSE(M[21:],spa_WMA)
+    err_TEXP=(MSE(M,spa_TEXP))
+
+    lamark=min(err_heim,err_MA,err_WMA,err_TEXP)
+    if lamark==err_heim:
+        plt.plot(range(21,len(spa_heima)+21),spa_heima,linestyle='--')
+        plt.title('Heimagerð spáaðferð gaf besta niðustöðu, spáin er brotalínan')
+        return (spa_heima)
+    if lamark==err_MA:
+        plt.plot(range(21,len(spa_MA)+21),spa_MA,linestyle='--')
+        plt.title('Hreifið meðaltal gaf besta niðustöðu,spáin er brotalínan')
+        return (spa_MA)
+    if lamark==err_WMA:
+        plt.plot(range(21,len(spa_WMA)+21),spa_WMA,linestyle='--')
+        plt.title('Veigið hreifið Meðaltal gaf bestu niðurstöðu,spáin er brotalínan')
+        return (spa_MA)
+    if lamark==err_TEXP:
+        plt.plot(range(0,len(spa_TEXP)),spa_TEXP,linestyle='--')
+        plt.title('Þreföld veldisjöfnun gaf bestu niðurstöðu,spáin er brotalínan')
+        return (spa_TEXP)
+
+def set_dates(data):
+    print('sláðu inn mörk tímabilsins sem athugið að það þarf að vera á milli 20160101 og 20160630 og að minstakosti 21 dagur:')
+    start_date=input("sláðu inn upphaf tímabils:")
+    stop_date=input("sláðu inn lok tímabilsins:")
+    data=data[data["dagsetning"]>int(start_date)]
+    data=data[data["dagsetning"]<int(stop_date)]
+    calls_inn,Date,weekday=Config_data(data)
+    if len(calls_inn)<21:
+        print("Villa:tímabil var styttra en 21 dagur ")
+        quit()
+    return (calls_inn,Date,weekday)
+
+def Config_data(Data):
+    M=[]
+    V=0
+    Date=[]
+    vikudagur=[]
+    for i in range(Data.index[0],len(Data.index)+Data.index[0]):
+        V=V+Data.loc[i,"simtol_inn"]
+        if Data.loc[i,"klukkustund"]==21:
+            M.append(V)
+            V=0
+            Date.append(Data.loc[i,"dagsetning"])
+            vikudagur.append(Data.loc[i,"dagur"])
+    return(M,Date,vikudagur)
+
+
+def Moving_Average(data,lengdspa):
+    spa=[]
+    F1=0
+    F2=0
+    F3=0
+    # ef dagur er ekki til í gögnum þá notum við spána til að "svindla"
+    for i in range(21,len(data)+lengdspa):
+        if len(data)<(i-21):
+            F1=spa[i-21-21]    #ástæðan fyrir auka  -21 er að spá listinn er 21 staki styttri en gögnin
+        else:                   
+            F1=data[i-21]
+        if len(data)-1<(i-14):
+            F2=spa[i-14-21]
+        else:
+            F2=data[i-14]
+        if len(data)-1<(i-7):
+            F3=spa[i-7-21]
+        else:
+            F3=data[i-7]
+        spa.append((F1+F2+F3)/3)
+    return spa
+def weighted_Moving_Average(data,lengdspa): #Hreifð veigið meðaltal inntak er spágögn og fjöldi daga sem á að spá áfram um
+    spa=[]
+    F1=0
+    F2=0
+    F3=0
+    # ef dagur er ekki til í gögnum þá notum við spána til að "svindla"
+    for i in range(21,len(data)+lengdspa):
+        if len(data)<(i-21):
+            F1=spa[i-21-21]*0.2    #ástæðan fyrir auka  -21 er að spá listinn er 21 staki styttri en gögnin
+        else:                   
+            F1=data[i-21]*0.2
+        if len(data)-1<(i-14):
+            F2=spa[i-14-21]*0.3
+        else:
+            F2=data[i-14]*0.3
+        if len(data)-1<(i-7):
+            F3=spa[i-7-21]*0.5
+        else:
+            F3=data[i-7]*0.5
+        spa.append((F1+F2+F3))
+    return spa
+
+
 #heimagerð spá aðferð blanda af tveimur síðustu dögum og 3 sömu vikudögunum tekurinn gögn og hversu langt á að spá
 def heimagerd_spa(data,lengdspa):
     spa=[]
@@ -11,10 +146,13 @@ def heimagerd_spa(data,lengdspa):
     F3=0
     F4=0
     F5=0
+    #ástæða fyrir if og else súpu  hér fyrir neðan er að þegar komið er út fyrir gögninn við spá þá þarf að 
+    # nota spána til þess að spá áfram og spá listinn er 21 staki styttri en gögninn  af því að það þarf að hafa 
+    #þrjár vikur til þess að að geta byrjað að spá með þessari aðferð
     for i in range(21,len(data)+lengdspa):
         if len(data)<(i-21):
-            F1=spa[i-21-21]*0.05
-        else:
+            F1=spa[i-21-21]*0.05    #ástæðan fyrir auka  -21 er að spá listinn er 21 staki styttri en gögnin
+        else:                   
             F1=data[i-21]*0.05
         if len(data)-1<(i-14):
             F2=spa[i-14-21]*0.25
@@ -36,29 +174,31 @@ def heimagerd_spa(data,lengdspa):
     
 
     return spa
-#Fall sem hjálpar til við að besta stuðlana fyrir þrefalda veldisjöfnun
+#Fall sem hjálpar til við að besta stuðlana fyrir þrefalda veldisjöfnun vigurinn X er upphafs gildinn sem byrjað er með við að reyna að lámarka
 def opti(x):
     spa=triple_exponential_smoothing(M,7,x[0],x[1],x[2],14)
 
     return(MSE(M,spa))
-#Fall sem býr finnur hvaða vikudaga er spáð fyrir fram í tíman
-def viku_dagar(spa,gogndagar):
-    for i in range(len(gogndagar),len(spa)): 
-        if  gogndagar[i-1]=='man':
-            gogndagar.append('tri')
-        if gogndagar[i-1]=='tri':
-            gogndagar.append('mid')
-        if gogndagar[i-1]=='mid':
-            gogndagar.append('fim')
-        if gogndagar[i-1]=='fim':
-            gogndagar.append('fos')
-        if gogndagar[i-1]=='fos':
-            gogndagar.append('lau')
-        if gogndagar[i-1]=='lau':
-            gogndagar.append('sun')
-        if gogndagar[i-1]=='sun':
-            gogndagar.append('man')
-    return (gogndagar)
+#Fall sem býr finnur hvaða vikudaga er spáð fyrir fram í tíman intaks breytur síðasti vikudagur í raungögnum 
+def viku_dagar(sidastid,lengdspa):
+    dagur=[]
+    dagur.append(sidastid)
+    for i in range(1,lengdspa+1): 
+        if  dagur[i-1]=='man':
+            dagur.append('tri')
+        if dagur[i-1]=='tri':
+            dagur.append('mid')
+        if dagur[i-1]=='mid':
+            dagur.append('fim')
+        if dagur[i-1]=='fim':
+            dagur.append('fos')
+        if dagur[i-1]=='fos':
+            dagur.append('lau')
+        if dagur[i-1]=='lau':
+            dagur.append('sun')
+        if dagur[i-1]=='sun':
+            dagur.append('man')
+    return (dagur[1:])
 #fall sem Tekur inn gögnin og býr til vigt fyrir hverja vinnustund á hverjum vikudegi 
 def Timavigt(Data):
     man=Data[Data["dagur"] =='man']
@@ -102,31 +242,38 @@ def Timavigt(Data):
     sun_av[:]=[x/su for x in sun_av]
 
     return (man_av, tri_av, mid_av, fim_av,fos_av,lau_av,sun_av)
-#fall sem notar spá, gögnin og dagana til þess að brjóta spá daginn yfir vinnudaginn
-def dreifing_klst(Data,spa,gogndagar):
-    (man,tri,mid,fim,fos,lau,sun)=Timavigt(Data)
-    A=len(gogndagar)
-    vikudag=viku_dagar(spa,gogndagar)
-    timar=[]
-    for i in range(A,len(spa)):
-        if vikudag[i]=='man':
-            timar.append([x*spa[i] for x in man])
-        if vikudag[i]=='tri':
-            timar.append([x*spa[i] for x in tri])
-        if vikudag[i]=='mid':
-            timar.append([x*spa[i] for x in mid])
-        if vikudag[i]=='fim':
-            timar.append([x*spa[i] for x in fim])
-        if vikudag[i]=='fos':
-            timar.append([x*spa[i] for x in fos])
-        if vikudag[i]=='lau':
-            timar.append([x*spa[i] for x in lau])
-        if vikudag[i]=='sun':
-            timar.append([x*spa[i] for x in sun])
-    return(timar)
+#fall sem notar spá, gögnin og dagana til þess að dreifa spá  spáðum degi yfir vinnudaginn 
+#inngangs breytur eru spáin, hvaða vikudaga það var spáð fram um og viktir fyrir álag yfir vinnudaginn á missmunandi vikudögum
+def dreifing_klst(spa,dagar,man,tri,mid,fim,fos,lau,sun):
 
-#fall sem reikna MSRE
-def MSRE(M,spa):
+    timar=[]
+    for i in range(0,len(dagar)):
+        if dagar[i]=='man':
+            timar.append([x*spa[i] for x in man])
+        if dagar[i]=='tri':
+            timar.append([x*spa[i] for x in tri])
+        if dagar[i]=='mid':
+            timar.append([x*spa[i] for x in mid])
+        if dagar[i]=='fim':
+            timar.append([x*spa[i] for x in fim])
+        if dagar[i]=='fos':
+            timar.append([x*spa[i] for x in fos])
+        if dagar[i]=='lau':
+            timar.append([x*spa[i] for x in lau])
+        if dagar[i]=='sun':
+            timar.append([x*spa[i] for x in sun])
+    titlestring='spáð álag fyrir dag nr:'
+
+    for i in range(0,len(timar)):
+        plt.figure()
+        plt.plot(range(9,len(timar[i])+9),timar[i])
+        r=titlestring+ repr(i+1)+' '+repr(dagar[i])
+        plt.title(r)
+        plt.axis([9,21,0, 250])
+
+
+#fall sem reiknar MSRE
+def MSE(M,spa):
     res=0
     for i in range(0,len(M)):
         res=res+math.sqrt((M[i]-spa[i])**2)
@@ -177,7 +324,7 @@ def triple_exponential_smoothing(data, x, alpha, beta, gamma, spa):
 
 
 Data = pd.DataFrame()
-Data=pd.read_excel('e:\likanX\DataA.xlsx', skiprows=3,parse_cols='B:P')  #skrá sett inn í pandas dataframe - athugið slóð að skrá er breytileg
+Data=pd.read_excel('E:\likanX\DataA.xlsx', skiprows=3,parse_cols='B:P')  #skrá sett inn í pandas dataframe - athugið slóð að skrá er breytileg
 
 #Breytum íslenskum stöfum í dálka nöfnum og línubil tekinn út 
 cols = Data.columns
@@ -188,69 +335,31 @@ dag = Data.dagur
 dag =dag.map(lambda x: x.replace('ö','o').replace('á','a').replace('ð','d').replace('þ','t'))
 Data.dagur=dag
 DataV=Data
-Data=Data[Data["manudur"]<5]
-
-
-M=[]
-V=0
-Date=[]
-Datafull=[]
-vikudagur=[]
-vikudagur2=[]
-for i in range(0,len(Data.index)):
-    V=V+Data.loc[i,"simtol_inn"]
-    if Data.loc[i,"klukkustund"]==21:
-        M.append(V)
-        V=0
-        Date.append(Data.loc[i,"dagsetning"])
-        vikudagur.append(Data.loc[i,"dagur"])
-V=0
-for i in range(0,len(DataV.index)):
-    V=V+DataV.loc[i,"simtol_inn"]
-    if DataV.loc[i,"klukkustund"]==21:
-        Datafull.append(V)
-        V=0
-        vikudagur2.append(DataV.loc[i,"dagur"])
-alph=0.2
-beta=0.2
-gamma=0.2
+#spalengd=int(input('Hvað á að spá fyrir marga daga fram í tíman:'))
+(man,tri,mid,fim,fos,lau,sun)=Timavigt(DataV)
+(M,date,vikudagur)=set_dates(Data)
 spalengd=14
-x=triple_exponential_smoothing(M,7,alph,beta,gamma,spalengd)
+
+spa_dagar=viku_dagar(vikudagur[-1],spalengd)
+
+
+
+#vigur með upphaflegum gildum Fyrir fasta í tripple exponential smoothing , 
 Z=[0.2,0.2,0.2]
 
 res=sci.minimize(opti,Z, method='Nelder-Mead')
-Sopt=triple_exponential_smoothing(M,7,res.x[0],res.x[1],res.x[2],spalengd)
-err=(MSE(M,Sopt))
+spa_TEXP=triple_exponential_smoothing(M,7,res.x[0],res.x[1],res.x[2],spalengd)
+spa_heima=heimagerd_spa(M,spalengd)
+spa_MA=Moving_Average(M,spalengd)
+spa_WMA=weighted_Moving_Average(M,spalengd)
 
-plt.figure()
-plt.plot(range(0,len(M)),M,marker='o',linestyle='-')
+#Tima_dreifing_ExpS=dreifing_klst(Data,spa_TEXP,vikudagur)
 
-plt.plot(range(len(M),len(x)),x[len(M):], marker='o',linestyle='-',color='r')
-plt.title("firsta spá alpa=0,2, beta=0,2 gamma=0,2")
+MM=select_forecast(M,spalengd)
 
-
-plt.figure()
-
-plt.plot(range(0,len(Datafull)),Datafull,marker='o',linestyle='-')
-plt.errorbar(range(0,len(Sopt)),Sopt,yerr=err ,marker='o',linestyle='--')
-plt.title("lámörkuð MSE skekkja")
-
-
-
-Tima_dreifing=dreifing_klst(Data,Sopt,vikudagur)
-titlestring='Þreföldveldisjöfnun:Símaálag yfir vinnudagin spá dagur nr: '
-for i in range(0,len(Tima_dreifing)):
-    plt.figure()
-    plt.plot(range(9,len(Tima_dreifing[i])+9),Tima_dreifing[i])
-    r=titlestring+ repr(i+1)
-    plt.title(r)
-    plt.axis([9,21,0, 120])
+plt.plot(range(0,len(M)),M)
 plt.show()
+dreifing_klst(MM[-14:],spa_dagar,man,tri,mid,fim,fos,lau,sun)
 
-spahal=heimagerd_spa(M,spalengd)
-plt.figure
-errspah=MSE(M[21:],spahal)
-print(errspah)
-plt.plot(range(21,len(spahal)+21),spahal)
-plt.plot(range(0,len(Datafull)),Datafull)
+
 plt.show()

@@ -43,9 +43,7 @@ plt.plot(df["Símtöl inn"],'r')
 plt.ylabel('Símtöl')
 plt.xlabel('Dagar')
 plt.show()
-#plt.plot(range(0,len(df["Símtöl inn"])))
-#plt.plot(range(3,len(spa)+3))
-#plt.show()
+
 
 
 
