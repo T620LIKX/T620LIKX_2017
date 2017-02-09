@@ -52,15 +52,13 @@ def Set_Staff():
 def nytt_simtal(id,simtalInn):
 	"""
 	Býr til nýtt símtal og upphafstillir breytur.
-	Breytan status heldur utan um í hvaða fasa símtalið er.
-	A: Er ekki búinn að hringja.
-	B: Er í röð.
-	C: Er í þjónustu.
-	D: Er búinn að fá þjónustu.
+	
+	ATH það á eftir að útfæra leiðina til að halda utanum ID
+
 	"""
 
 	lengdSimtal= int(np.random.exponential(scale=100, size=None)) # beta =100 parameter fyrir exponential 1/landa
-	simtal = {"ID": ID, 'status': "A", 'Lengd_Simtals':lengdSimtal, 'Bidtimi': "NAN", 'Simtal_Inn': simtalInn, 'Simtal_Lokid': "NAN"}
+	simtal = {"ID": ID,'Lengd_Simtals':lengdSimtal, 'callInn': simtalInn, }
 	return (simtal);
 
 
@@ -72,8 +70,9 @@ def At_Event(EventType, time):
 	InnhringiVer Lokar:			closes
 	StarfsmaðurHefurVinnu:		starts
 	StarfsmaðurFerHeim:			ends
-	SimtalKemurInn:				callInn
-	SimtaliLykur:				callEnds
+	SimtalKemurInn:				callInn 		<--- nytt_simtal
+	SimtaliLykur:				callEnds 
+	Tékka á stöðunni:			checkStatus     <--- Þetta fall er keyrt eftir hvert skipti sem starfsmaður klárar símtal "í while lykkjunni" og þá tékkar það aftur í event list hvort það sé símtal í röðinni og ef svo er þá skráir það símtalið á starfsmanninn.
 
 	'''
 
@@ -106,7 +105,10 @@ while clock <= GeneralInfo["CloseAt"]:
 
 '''
 	if e["Type"] == eitthvad
-		
+
+		gera eitthvað. Gætum verið með skjal/lista um allar niðurstöður og þetta fall gæti uppfært það.
+		a
+
 	elif e["Type"] == eitthvad
 
 	elif e["Type"] == eitthvad
