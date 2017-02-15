@@ -14,7 +14,7 @@ class PhonecallsManager:
         phonecall['event_id'] = event_id
 
         phonecall['length'] = settings.rand_phonecall_length()
-
+        phonecall['Reneging time'] = 150   # á eftir að útfæra nánar en dugar í bili.
         phonecall['arrival'] = currenttime
         phonecall['time'] = currenttime
         phonecall['answer time'] = 0
