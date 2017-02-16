@@ -4,7 +4,7 @@ import numpy
 class SettingsManager():
     def __init__(self):
         self.starttime = 0
-        self.endtime = 300
+        self.endtime = 10000
         self.number_of_workers = 1
 
         self.lam = 0.1
