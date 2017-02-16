@@ -1,6 +1,3 @@
-
-
-
 def show_output(stats, events, workers, settings):
     print('Number of phonecalls: {}'.format(stats.phonecall_counter))
     #print('Answered phonecalls:  {}'.format(stats.phonecalls_answered))

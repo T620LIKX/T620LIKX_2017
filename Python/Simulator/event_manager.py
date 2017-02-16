@@ -15,6 +15,7 @@ class EventsManager:
         e['type'] = event_type
         e['time'] = event_time
         e['object id'] = object_id
+    
         self.events.enqueue(e)
 
     def initialize_events(self, workers, settings):
