@@ -19,7 +19,15 @@ class Queue:
     def empty(self):
         while isempty() != True:
             dequeue()
+    
 
+    #Viðbót vegna Reneging
+    def search(self, value):
+        print(self.items)
+        for i, dic in enumerate(self.items):
+            if dic['id'] == value:
+                return i
+        return -1
 
 class SortedQueue:
     def __init__(self):
@@ -42,3 +50,11 @@ class SortedQueue:
     def empty(self):
         while isempty() != True:
             dequeue()
+    #Viðbót vegna Reneging   
+    def search(self, value):
+        print(self.items)
+        for i, dic in enumerate(self.items):
+            if dic['id'] == value:
+                return i
+        return -1
+
