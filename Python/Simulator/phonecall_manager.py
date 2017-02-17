@@ -34,6 +34,19 @@ class PhonecallsManager:
 
     def length(self):
         return self.phonecalls.length()
+            
+    #Viðbót vegna Reneging
+    def search(self, value):
+        for p in self.phonecalls.items:    
+            if p['id']== value:
+                print(p)
+        
+        for i, dic in enumerate(self.phonecalls.items):
+            if dic.get('id') == value:
+                return i
+        return -1
+    
+    #Viðbót vegna Reneging
+    def leave_queue(self,num):
+        return self.phonecalls.items.pop(num)
 
-    def search(self,id):
-        return self.phonecalls.search(id)
