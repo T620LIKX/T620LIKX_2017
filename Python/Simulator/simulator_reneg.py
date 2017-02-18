@@ -39,7 +39,7 @@ while currenttime < s.endtime:
         phonecalls.add_phonecall(e['id'], currenttime, s)
         events.add_event('phonecall arrive', currenttime + s.rand_arrival_time())
         events.add_event('check', currenttime)
-        events.add_event('phonecall renegs', currenttime + s.rand_reneg_time(), e['id'] )
+        events.add_event('phonecall renegs', currenttime + s.rand_reneg_time(), phonecalls.phonecall_id)
 
         event_time.append(e['time'])
         event_counter.append(counter-1)
@@ -69,10 +69,8 @@ while currenttime < s.endtime:
         event_time.append(e['time'])
         event_counter.append(counter) # appenda tölunni sem var á undan + 1
     elif e['type'] == 'phonecall renegs':
-       X = phonecalls.search(e['object id'])
-       #print(X)
-       if  X != -1:
-            print(X)
+        phonecalls.reneg(e['object id'])
+
     # collect statistics
     stats.update_statistics(currenttime, lasttime, events, phonecalls, workers, s)
     lasttime = currenttime
@@ -83,7 +81,7 @@ stats.calculate_statistics(phonecalls, workers, s)
 
 # output
 om.show_output(stats, events, workers, s)
-
+print(phonecalls.length_R())
 event_plot = pd.DataFrame([event_time,event_counter]).transpose()
 event_plot.columns = ['time','counter']
 #print(event_plot)
