@@ -6,7 +6,7 @@ class PhonecallsManager:
         self.phonecalls = ds.Queue()
         self.finished_phonecalls = []
         self.phonecall_id = 0
-
+        self.reneging_phonecalls = []
     def add_phonecall(self, event_id, currenttime, settings):
         phonecall = {}
         phonecall['id'] = self.phonecall_id
@@ -35,18 +35,25 @@ class PhonecallsManager:
     def length(self):
         return self.phonecalls.length()
             
-    #Viðbót vegna Reneging
-    def search(self, value):
-        for p in self.phonecalls.items:    
-            if p['id']== value:
-                print(p)
-        
-        for i, dic in enumerate(self.phonecalls.items):
-            if dic.get('id') == value:
-                return i
-        return -1
-    
-    #Viðbót vegna Reneging
-    def leave_queue(self,num):
-        return self.phonecalls.items.pop(num)
+    #Allt hérna fyrir neðan er viðbót vegna reneging 
+    def reneg(self,value):
+        i=self.search(value)
+        if i != -1:
+            self.leave_queue(i)
 
+
+
+
+    def search(self, value):    
+        if len(self.phonecalls.items) >0:
+            for i in range(0, len(self.phonecalls.items)):
+                if (self.phonecalls.items[i]['id'] == value):
+                    return i
+        return -1
+
+    def leave_queue(self,num):
+        phonecall = self.phonecalls.items.pop(num)
+        self.reneging_phonecalls.append(phonecall)
+    def length_R(self):
+        return len(self.reneging_phonecalls)
+        
