@@ -17,7 +17,16 @@ class WorkersManager:
         w['idle'] = True
         w['phonecall'] = 0
         w['idletime'] = 0
+        w['status'] = 'idle'  # idle, incall, inlunch, notworking
         self.workers.append(w)
+        self.create_worker(settings,worker_id) # búa til vaktaplan fyrir starfsmann, á kannski bara að vera w['id'] ??
+
+    def create_worker_schedule(self, settings,worker_id): # núna bara harðkoðað annars hægt að lesa inn eða ehv
+        ws = {}
+        ws['id'] = self.workers[worker_id] # spurning um að kalla á öðruvísi
+        ws['workstarts'] = 0
+        ws['workend'] = 1000
+        self.workers_schedule.append(ws)
 
     def get_idle_worker_id(self):
         idleworkerindex = -1
@@ -30,7 +39,7 @@ class WorkersManager:
 
     def workers_available(self):
         for w in self.workers:
-            if w['idle']:
+            if w['idle']==True: # bætti við ==True þarf þess ekki ??
                 return True
         return False
 
@@ -39,17 +48,22 @@ class WorkersManager:
         phonecall['answer time'] = currenttime
         self.workers[i]['phonecall'] = phonecall
         self.workers[i]['idle'] = False
+        self.workers[i]['status'] = 'incall'
         return i
 
     def finish_phonecall(self, worker_id):
         p = self.workers[worker_id]['phonecall']
         self.workers[worker_id]['phonecall'] = 0
         self.workers[worker_id]['idle'] = True
+        self.workers[i]['status'] = 'idle'
         return p
 
 
-    def update_idletime(self, time_passed):
+    def update_idletime(self, time_passed): ## kannski bara hægt að breyta í uptade_status
         for i in range(len(self.workers)):
             self.workers[i]['idletime'] += time_passed * self.workers[i]['idle']
+           # if time_passed>=self.workers_schedule[i]['shift_end'] or time_passed <=self.workers_schedule[i]['shift_start'] and self.workers[i]['idle'] ==True
+           #     self.workers[i]['status'] = 'notworking'
 
 
+'''þetta á eftir að útfæra'''
