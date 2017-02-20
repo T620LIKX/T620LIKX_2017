@@ -21,6 +21,7 @@ class WorkersManager:
         self.workers.append(w)
         self.create_worker(settings,worker_id) # búa til vaktaplan fyrir starfsmann, á kannski bara að vera w['id'] ??
 
+        # eyjó var að tala um að hafa þetta í event _manager
     def create_worker_schedule(self, settings,worker_id): # núna bara harðkoðað annars hægt að lesa inn eða ehv
         ws = {}
         ws['id'] = self.workers[worker_id] # spurning um að kalla á öðruvísi
@@ -62,8 +63,12 @@ class WorkersManager:
     def update_idletime(self, time_passed): ## kannski bara hægt að breyta í uptade_status
         for i in range(len(self.workers)):
             self.workers[i]['idletime'] += time_passed * self.workers[i]['idle']
-           # if time_passed>=self.workers_schedule[i]['shift_end'] or time_passed <=self.workers_schedule[i]['shift_start'] and self.workers[i]['idle'] ==True
-           #     self.workers[i]['status'] = 'notworking'
+        self.update_worker_status(time_passed) # setti hér má kannski vera annarstaðar
+
+'''þetta á eftir að útfæra passar kannski betur annarstaðar, væri hgæt að athuga með pásur og annað hér '''
+    def update_worker_status(self, time_passed,):
+        for i in range(len(self.workers)):
+            if time_passed>=self.workers_schedule[i]['shift_end'] or time_passed <=self.workers_schedule[i]['shift_start'] and self.workers[i]['idle'] ==True
+                self.workers[i]['status'] = 'notworking'
 
 
-'''þetta á eftir að útfæra'''
