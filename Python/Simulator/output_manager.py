@@ -1,6 +1,6 @@
 def show_output(stats, events, workers, settings):
     print('Number of phonecalls: {}'.format(stats.phonecall_counter))
-    #print('Answered phonecalls:  {}'.format(stats.phonecalls_answered))
+    print('Answered phonecalls:  {}'.format(stats.phonecalls_answered))
     print('Number of events: {}'.format(events.event_id))
     print('Average sojourn: {}'.format(stats.average_sojourn))
     print('Average wait: {}'.format(stats.average_wait))
