@@ -25,8 +25,7 @@ class StatisticsManager:
         self.phonecalls_answered = len(phonecalls.finished_phonecalls)
         self.finished_phonecalls = phonecalls.phonecall_id
         self.reneging_phonecalls = len(phonecalls.reneging_phonecalls)
-        print (self.phonecall_counter)
-        print (self.reneging_phonecalls)
+
         for p in phonecalls.finished_phonecalls:
             self.average_sojourn += p['end time'] - p['arrival']
             self.average_wait += p['answer time'] - p['arrival']
