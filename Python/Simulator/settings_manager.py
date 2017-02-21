@@ -17,7 +17,7 @@ class SettingsManager():
     def rand_arrival_time(self):
         return numpy.random.exponential(1/self.lam)
     def rand_reneg_time(self):  # á eftir að breyta
-        return endtime+1
+        return self.endtime+1
 
 
 
