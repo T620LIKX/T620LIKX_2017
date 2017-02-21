@@ -39,7 +39,7 @@ while currenttime < s.endtime:
         phonecalls.add_phonecall(e['id'], currenttime, s)
         events.add_event('phonecall arrive', currenttime + s.rand_arrival_time())
         events.add_event('check', currenttime)
-
+        events.add_event('phonecall renegs', currenttime + s.rand_reneg_time(), phonecalls.phonecall_id -1 ) # off by 1 villa sem þarf að laga 
         event_time.append(e['time'])
         event_counter.append(counter-1)
         event_time.append(e['time'])
@@ -67,7 +67,8 @@ while currenttime < s.endtime:
         event_counter.append(counter+1)
         event_time.append(e['time'])
         event_counter.append(counter) # appenda tölunni sem var á undan + 1
-
+    elif e['type'] == 'phonecall renegs':
+        phonecalls.reneg(e['object id'])
 
     # collect statistics
     stats.update_statistics(currenttime, lasttime, events, phonecalls, workers, s)
