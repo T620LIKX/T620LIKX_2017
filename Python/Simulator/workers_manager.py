@@ -3,6 +3,7 @@ class WorkersManager:
 
     def __init__(self):
         self.workers = []
+        self.workers_schedule = []
         self.worker_id = 0
 
     def add_workers(self, settings):
@@ -19,7 +20,7 @@ class WorkersManager:
         w['idletime'] = 0
         w['status'] = 'idle'  # idle, incall, inlunch, notworking
         self.workers.append(w)
-        self.create_worker(settings,worker_id) # búa til vaktaplan fyrir starfsmann, á kannski bara að vera w['id'] ??
+        self.create_worker_schedule(settings,w['id']) # búa til vaktaplan fyrir starfsmann, á kannski bara að vera w['id'] ??
 
         # eyjó var að tala um að hafa þetta í event _manager
     def create_worker_schedule(self, settings,worker_id): # núna bara harðkoðað annars hægt að lesa inn eða ehv
@@ -56,19 +57,19 @@ class WorkersManager:
         p = self.workers[worker_id]['phonecall']
         self.workers[worker_id]['phonecall'] = 0
         self.workers[worker_id]['idle'] = True
-        self.workers[i]['status'] = 'idle'
+        self.workers[worker_id]['status'] = 'idle'
         return p
 
 
     def update_idletime(self, time_passed): ## kannski bara hægt að breyta í uptade_status
         for i in range(len(self.workers)):
             self.workers[i]['idletime'] += time_passed * self.workers[i]['idle']
-        self.update_worker_status(time_passed) # setti hér má kannski vera annarstaðar
+        #self.update_worker_status(time_passed) # setti hér má kannski vera annarstaðar eftir að uppfæra
 
-'''þetta á eftir að útfæra passar kannski betur annarstaðar, væri hgæt að athuga með pásur og annað hér '''
-    def update_worker_status(self, time_passed,):
+#'''þetta á eftir að útfæra passar kannski betur annarstaðar, væri hgæt að athuga með pásur og annað hér '''
+    def update_worker_status(self, time_passed):
         for i in range(len(self.workers)):
-            if time_passed>=self.workers_schedule[i]['shift_end'] or time_passed <=self.workers_schedule[i]['shift_start'] and self.workers[i]['idle'] ==True
+            if time_passed>=self.workers_schedule[i]['shift_end'] or time_passed <=self.workers_schedule[i]['shift_start'] and self.workers[i]['idle'] ==True:
                 self.workers[i]['status'] = 'notworking'
 
 
