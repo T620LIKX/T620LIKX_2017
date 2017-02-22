@@ -70,6 +70,12 @@ while currenttime < s.endtime:
     elif e['type'] == 'phonecall renegs':
         phonecalls.reneg(e['object id'])
 
+        
+    elif e['type'] == 'worker':
+            # hérna uppfæra mat/kaffi/úrvinnsla og annað ... ? 
+        #p = workers.
+
+        
     # collect statistics
     stats.update_statistics(currenttime, lasttime, events, phonecalls, workers, s)
     lasttime = currenttime

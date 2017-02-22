@@ -61,4 +61,3 @@ class WorkersManager:
     def update_idletime(self, time_passed): ## kannski bara hægt að breyta í uptade_status
         for i in range(len(self.workers)):
             self.workers[i]['idletime'] += time_passed * self.workers[i]['idle']
-        
