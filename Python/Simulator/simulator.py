@@ -24,16 +24,20 @@ events.initialize_events(workers, s)
 # simulation loop
 currenttime = s.starttime
 lasttime = currenttime
+
+# Lists for plotting
 event_time = [0]
 event_counter = [0]
-counter = 0
+people_counter = 0
+reneg_time = [0]
+reneg_counter=[0]
 
 while currenttime < s.endtime:
     e = events.get_next_event()
     currenttime = e['time']
 
     if e['type'] == 'phonecall arrive':
-        counter += 1
+        people_counter += 1
         # create a new phonecall, add it to the queue
         # add an event for the next phonecall arrival
         phonecalls.add_phonecall(e['id'], currenttime, s)
@@ -41,9 +45,9 @@ while currenttime < s.endtime:
         events.add_event('check', currenttime)
         events.add_event('phonecall renegs', currenttime + s.rand_reneg_time(), phonecalls.phonecall_id -1 ) # off by 1 villa sem þarf að laga 
         event_time.append(e['time'])
-        event_counter.append(counter-1)
+        event_counter.append(people_counter-1)
         event_time.append(e['time'])
-        event_counter.append(counter) # appenda tölunni sem var á undan + 1
+        event_counter.append(people_counter) # appenda tölunni sem var á undan + 1
  
 
     elif e['type'] == 'check':
@@ -55,7 +59,7 @@ while currenttime < s.endtime:
             events.add_event('phonecall ends', currenttime + p['length'], worker_index)
 
     elif e['type'] == 'phonecall ends':
-        counter -= 1
+        people_counter -= 1
         # end a phonecall, update the statistics
         # add a check idle event
         p = workers.finish_phonecall( e['object id'] )
@@ -64,13 +68,16 @@ while currenttime < s.endtime:
         events.add_event('check', currenttime)
 
         event_time.append(e['time'])
-        event_counter.append(counter+1)
+        event_counter.append(people_counter+1)
         event_time.append(e['time'])
-        event_counter.append(counter) # appenda tölunni sem var á undan + 1
+        event_counter.append(people_counter)
     elif e['type'] == 'phonecall renegs':
         phonecalls.reneg(e['object id'])
-
         
+        reneg_time.append(e['time'])
+        reneg_counter.append(people_counter)
+
+
     #elif e['type'] == 'worker':
             # hérna uppfæra mat/kaffi/úrvinnsla og annað ... ? 
     #    p = 1
@@ -85,17 +92,22 @@ while currenttime < s.endtime:
 stats.calculate_statistics(phonecalls, workers, s)
 
 # output
-# om.show_output(stats, events, workers, s)
-
+om.show_output(stats, events, workers, s)
+"""
 event_plot = pd.DataFrame([event_time,event_counter]).transpose()
 event_plot.columns = ['time','counter']
-print(event_plot)
-#print(event_time)
 
+reneg_plot = pd.DataFrame([reneg_time,reneg_counter]).transpose()
+reneg_plot.columns = ['time', 'counter']
+
+plt.figure(1)
 plt.plot(event_plot['time'],event_plot['counter'])
+
+plt.plot(reneg_plot['time'],reneg_plot['counter'], '*')
+
+
 plt.show()
-
-
+"""
 
 
 
