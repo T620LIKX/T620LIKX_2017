@@ -21,11 +21,11 @@ class WorkersManager:
         w['worktime'] = 0 # vinna lengur en x þá kaffi / mat 
         self.workers.append(w)
         # búa til kannski svolítið harðkóðað en þetta er hugmyndin
-        event.add_event('worker', 0, 'worker_start')
-        event.add_event('worker', 9500, 'worker_end')
-        event.add_event('worker', 4000, 'lunch')
-        event.add_event('worker', 2000, 'break')
-        event.add_event('worker', 7000, 'break')
+        # event.add_event('worker', 0, 'worker_start')
+        # event.add_event('worker', 9500, 'worker_end')
+        # event.add_event('worker', 4000, 'lunch')
+        # event.add_event('worker', 2000, 'break')
+        # event.add_event('worker', 7000, 'break')
 
 
     def get_idle_worker_id(self):

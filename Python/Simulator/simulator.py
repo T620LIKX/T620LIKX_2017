@@ -71,9 +71,9 @@ while currenttime < s.endtime:
         phonecalls.reneg(e['object id'])
 
         
-    elif e['type'] == 'worker':
+    #elif e['type'] == 'worker':
             # hérna uppfæra mat/kaffi/úrvinnsla og annað ... ? 
-        #p = workers.
+    #    p = 1
 
         
     # collect statistics
