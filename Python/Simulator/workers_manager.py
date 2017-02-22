@@ -14,21 +14,19 @@ class WorkersManager:
         w = {}
         w['id'] = self.worker_id
         self.worker_id += 1
-
         w['idle'] = True
         w['phonecall'] = 0
         w['idletime'] = 0
-        w['status'] = 'idle'  # idle, incall, inlunch, notworking
+        w['status'] = 'idle'  # idle, incall, inlunch, notworking, aftercall,break
+        w['worktime'] = 0 # vinna lengur en x þá kaffi / mat 
         self.workers.append(w)
-        self.create_worker_schedule(settings,w['id']) # búa til vaktaplan fyrir starfsmann, á kannski bara að vera w['id'] ??
+        # búa til kannski svolítið harðkóðað en þetta er hugmyndin
+        event.add_event('worker', 0, 'worker_start')
+        event.add_event('worker', 9500, 'worker_end')
+        event.add_event('worker', 4000, 'lunch')
+        event.add_event('worker', 2000, 'break')
+        event.add_event('worker', 7000, 'break')
 
-        # eyjó var að tala um að hafa þetta í event _manager
-    def create_worker_schedule(self, settings,worker_id): # núna bara harðkoðað annars hægt að lesa inn eða ehv
-        ws = {}
-        ws['id'] = self.workers[worker_id] # spurning um að kalla á öðruvísi
-        ws['workstarts'] = 0
-        ws['workend'] = 1000
-        self.workers_schedule.append(ws)
 
     def get_idle_worker_id(self):
         idleworkerindex = -1
@@ -41,7 +39,7 @@ class WorkersManager:
 
     def workers_available(self):
         for w in self.workers:
-            if w['idle']==True: # bætti við ==True þarf þess ekki ??
+            if w['idle']:
                 return True
         return False
 
@@ -60,16 +58,7 @@ class WorkersManager:
         self.workers[worker_id]['status'] = 'idle'
         return p
 
-
     def update_idletime(self, time_passed): ## kannski bara hægt að breyta í uptade_status
         for i in range(len(self.workers)):
             self.workers[i]['idletime'] += time_passed * self.workers[i]['idle']
-        #self.update_worker_status(time_passed) # setti hér má kannski vera annarstaðar eftir að uppfæra
-
-#'''þetta á eftir að útfæra passar kannski betur annarstaðar, væri hgæt að athuga með pásur og annað hér '''
-    def update_worker_status(self, time_passed):
-        for i in range(len(self.workers)):
-            if time_passed>=self.workers_schedule[i]['shift_end'] or time_passed <=self.workers_schedule[i]['shift_start'] and self.workers[i]['idle'] ==True:
-                self.workers[i]['status'] = 'notworking'
-
-
+        
