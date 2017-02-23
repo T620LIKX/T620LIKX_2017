@@ -21,8 +21,11 @@ class EventsManager:
     def initialize_events(self, workers, settings):
         self.add_event('simulation ends', settings.endtime)
         self.add_event('phonecall arrive', settings.starttime + settings.rand_arrival_time())
-       #self.add_event('workers schedule',settings.starttime, 'workers_end' =setting.endtime) fatta ekki alveg
-
+        self.add_event('worker', 500, 'worker_start')
+        self.add_event('worker', 9500, 'worker_end')
+        self.add_event('worker', 4000, 'lunch')
+        self.add_event('worker', 2500, 'break')
+        self.add_event('worker', 6500, 'break')
 
     def get_next_event(self):
         if self.length() > 0:

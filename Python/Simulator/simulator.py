@@ -44,7 +44,6 @@ while currenttime < s.endtime:
         events.add_event('phonecall arrive', currenttime + s.rand_arrival_time())
         events.add_event('check', currenttime)
         events.add_event('phonecall renegs', currenttime + s.rand_reneg_time(), phonecalls.phonecall_id -1 ) # off by 1 villa sem þarf að laga 
-        
         event_time.append(e['time'])
         event_counter.append(people_counter-1)
         event_time.append(e['time'])
@@ -72,6 +71,7 @@ while currenttime < s.endtime:
         event_counter.append(people_counter+1)
         event_time.append(e['time'])
         event_counter.append(people_counter)
+    
     elif e['type'] == 'phonecall renegs':
         phonecalls.reneg(e['object id'])
         for key in phonecalls.reneging_phonecalls:
@@ -87,9 +87,11 @@ while currenttime < s.endtime:
 
         
 
-    #elif e['type'] == 'worker':
-            # hérna uppfæra mat/kaffi/úrvinnsla og annað ... ? 
-    #    p = 1
+    elif e['type'] == 'worker':  # event type er worker þá þarf að athuga hvað er að gerast
+        workers.update_status(e['object id'],currenttime) # uppfærum status á starfsmanni
+        if e['object id'] == 'break' or e['object id'] == 'lunch' : # ef hann er að fara í pásu þarf hann að byrja vinna aftur
+            events.add_event('worker', currenttime+500,'break_done') # stillum hér að hann sé 500 sek í pásu
+        events.add_event('check', currenttime) # þarf þetta ekki alltaf að vera ?
 
         
     # collect statistics
