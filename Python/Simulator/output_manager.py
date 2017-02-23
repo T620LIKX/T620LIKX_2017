@@ -14,3 +14,4 @@ def show_output(stats, events, workers, settings):
     print("Little's law:  {}".format( 1 / (settings.mu-settings.lam)))
     print('Waiting time:  {}'.format(stats.average_wait))
     print('Expected wait: {}'.format( settings.rho / (settings.mu-settings.lam) ))
+    print('Number of renegs: {}'.format (stats.reneging_phonecalls))

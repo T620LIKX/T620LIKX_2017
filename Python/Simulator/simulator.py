@@ -29,8 +29,8 @@ lasttime = currenttime
 event_time = [0]
 event_counter = [0]
 people_counter = 0
-reneg_time = [0]
-reneg_counter=[0]
+reneg_time =[0]
+reneg_counter = [0]
 
 while currenttime < s.endtime:
     e = events.get_next_event()
@@ -44,6 +44,7 @@ while currenttime < s.endtime:
         events.add_event('phonecall arrive', currenttime + s.rand_arrival_time())
         events.add_event('check', currenttime)
         events.add_event('phonecall renegs', currenttime + s.rand_reneg_time(), phonecalls.phonecall_id -1 ) # off by 1 villa sem þarf að laga 
+        
         event_time.append(e['time'])
         event_counter.append(people_counter-1)
         event_time.append(e['time'])
@@ -73,10 +74,18 @@ while currenttime < s.endtime:
         event_counter.append(people_counter)
     elif e['type'] == 'phonecall renegs':
         phonecalls.reneg(e['object id'])
-        
-        reneg_time.append(e['time'])
-        reneg_counter.append(people_counter)
+        for key in phonecalls.reneging_phonecalls:
+           if (key['arrival'] + key['Reneging time']) == e['time']:
+            people_counter -= 1
+            event_time.append(e['time'])
+            event_counter.append(people_counter+1)
+            event_time.append(e['time'])
+            event_counter.append(people_counter)
 
+            reneg_time.append(e['time'])
+            reneg_counter.append(people_counter+1)
+
+        
 
     #elif e['type'] == 'worker':
             # hérna uppfæra mat/kaffi/úrvinnsla og annað ... ? 
@@ -91,23 +100,11 @@ while currenttime < s.endtime:
 # final stats collection
 stats.calculate_statistics(phonecalls, workers, s)
 
-# output
+#output
 om.show_output(stats, events, workers, s)
-"""
-event_plot = pd.DataFrame([event_time,event_counter]).transpose()
-event_plot.columns = ['time','counter']
 
-reneg_plot = pd.DataFrame([reneg_time,reneg_counter]).transpose()
-reneg_plot.columns = ['time', 'counter']
+# Plotting commands
 
-plt.figure(1)
-plt.plot(event_plot['time'],event_plot['counter'])
-
-plt.plot(reneg_plot['time'],reneg_plot['counter'], '*')
-
-
+plt.plot(event_time,event_counter)
+plt.plot(reneg_time,reneg_counter,'o')
 plt.show()
-"""
-
-
-

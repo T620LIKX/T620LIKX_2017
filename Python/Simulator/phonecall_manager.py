@@ -42,8 +42,6 @@ class PhonecallsManager:
             self.leave_queue(i)
 
 
-
-
     def search(self, value):    
         if len(self.phonecalls.items) >0:
             for i in range(0, len(self.phonecalls.items)):
