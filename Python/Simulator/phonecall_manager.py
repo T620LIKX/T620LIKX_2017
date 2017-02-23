@@ -4,6 +4,7 @@ class PhonecallsManager:
 
     def __init__(self):
         self.phonecalls = ds.Queue()
+        self.priority_calls = ds.Queue()
         self.finished_phonecalls = []
         self.phonecall_id = 0
         self.reneging_phonecalls = []
@@ -56,7 +57,7 @@ class PhonecallsManager:
     def leave_queue(self,num):
         phonecall = self.phonecalls.items.pop(num)
         self.reneging_phonecalls.append(phonecall)
-    #lengd á 
+    #lengd á reneging röðini
     def length_R(self):
         return len(self.reneging_phonecalls)
         
