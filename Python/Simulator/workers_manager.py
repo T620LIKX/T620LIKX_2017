@@ -14,18 +14,15 @@ class WorkersManager:
         w = {}
         w['id'] = self.worker_id
         self.worker_id += 1
-        w['idle'] = True
+        w['idle'] = False
         w['phonecall'] = 0
         w['idletime'] = 0
-        w['status'] = 'idle'  # idle, incall, inlunch, notworking, aftercall,break
+        w['status'] = 'notworking'  # idle, incall, inlunch, notworking, aftercall,break
         w['worktime'] = 0 # vinna lengur en x þá kaffi / mat 
+        w['breaktime'] = 0 # pásan er bara 20 mín eða ehv 
         self.workers.append(w)
         # búa til kannski svolítið harðkóðað en þetta er hugmyndin
-        # event.add_event('worker', 0, 'worker_start')
-        # event.add_event('worker', 9500, 'worker_end')
-        # event.add_event('worker', 4000, 'lunch')
-        # event.add_event('worker', 2000, 'break')
-        # event.add_event('worker', 7000, 'break')
+
 
 
     def get_idle_worker_id(self):
@@ -61,3 +58,31 @@ class WorkersManager:
     def update_idletime(self, time_passed): ## kannski bara hægt að breyta í uptade_status
         for i in range(len(self.workers)):
             self.workers[i]['idletime'] += time_passed * self.workers[i]['idle']
+
+    def update_status(self,event,time_passed,id = -1):
+        for i in range(len(self.workers)):
+            if event == 'worker_start':
+                self.workers[i]['status'] = 'idle'
+                self.workers[i]['idle'] = True
+                self.workers[i]['worktime'] = 0
+
+            elif event == 'worker_end':
+                self.workers[i]['status'] = 'notworking'
+                self.workers[i]['idle'] = False
+
+            elif event == 'break':
+                self.workers[i]['status'] = 'break'
+                self.workers[i]['idle'] = False
+                self.workers[i]['worktime'] = 0
+
+            elif event == 'break_done':
+                self.workers[i]['status'] = 'idle'
+                self.workers[i]['idle'] = True
+                self.workers[i]['worktime'] = 0
+                self.workers[i]['breaktime'] = 0
+            
+            elif event == 'lunch':
+                self.workers[i]['status'] = 'lunch'
+                self.workers[i]['idle'] = False
+                self.workers[i]['worktime'] = 0
+      
