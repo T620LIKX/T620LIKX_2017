@@ -43,7 +43,7 @@ while currenttime < s.endtime:
         phonecalls.add_phonecall(e['id'], currenttime, s)
         events.add_event('phonecall arrive', currenttime + s.rand_arrival_time())
         events.add_event('check', currenttime)
-        events.add_event('phonecall renegs', currenttime + s.rand_reneg_time(), phonecalls.phonecall_id -1 ) # off by 1 villa sem þarf að laga 
+        events.add_event('phonecall renegs', currenttime + s.rand_reneg_time(), phonecalls.latest_id() ) # off by 1 villa sem þarf að laga 
         event_time.append(e['time'])
         event_counter.append(people_counter-1)
         event_time.append(e['time'])
