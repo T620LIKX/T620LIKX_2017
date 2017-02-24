@@ -8,6 +8,7 @@ class PhonecallsManager:
         self.finished_phonecalls = []
         self.phonecall_id = 0
         self.reneging_phonecalls = []
+        self.processing_phonecalls = []
     def add_phonecall(self, event_id, currenttime, settings):
         phonecall = {}
         phonecall['id'] = self.phonecall_id
@@ -20,6 +21,7 @@ class PhonecallsManager:
         phonecall['time'] = currenttime
         phonecall['answer time'] = 0
         phonecall['end time'] = 0
+        phonecall['processing time'] = settings.rand_processing_time() 
 
         self.phonecalls.enqueue(phonecall)
 
