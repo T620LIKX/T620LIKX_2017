@@ -20,6 +20,7 @@ class WorkersManager:
         w['status'] = 'notworking'  # idle, incall, inlunch, notworking, aftercall,break
         w['worktime'] = 0 # vinna lengur en x þá kaffi / mat 
         w['breaktime'] = 0 # pásan er bara 20 mín eða ehv 
+        w['processing'] = 0 # urvinnsla simtals
         self.workers.append(w)
         # búa til kannski svolítið harðkóðað en þetta er hugmyndin
 
@@ -47,6 +48,20 @@ class WorkersManager:
         self.workers[i]['idle'] = False
         self.workers[i]['status'] = 'incall'
         return i
+
+    def start_processing(self, worker_id):                         ### baetti vid naestu 2 follum skoða þau // rebekka
+        p = self.workers[worker_id]['phonecall']
+        self.workers[worker_id]['phonecall'] = phonecall                     
+        self.workers[worker_id]['idle'] = False                      
+        self.workers[worker_id]['status'] = 'processing'  
+        return p
+
+    def finish_processing(self, worker_id):
+        p = self.workers[worker_id]['phonecall']
+        self.workers[worker_id]['processing'] = 0                     
+        self.workers[worker_id]['idle'] = True                      
+        self.workers[worker_id]['status'] = 'idle'                  
+        return p
 
     def finish_phonecall(self, worker_id):
         p = self.workers[worker_id]['phonecall']
@@ -85,4 +100,12 @@ class WorkersManager:
                 self.workers[i]['status'] = 'lunch'
                 self.workers[i]['idle'] = False
                 self.workers[i]['worktime'] = 0
+
+            elif event == 'processing':                  ## skoða þetta útaf eventið er ekki búið til í event_manager // rebekka
+                self.workers[i]['status'] = 'processing'
+                self.workers[i]['idle'] = False
+                self.workers[i]['worktime'] = 0
+
+
+
       
