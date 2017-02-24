@@ -57,14 +57,18 @@ while currenttime < s.endtime:
             p['answer time'] = currenttime
             worker_index = workers.answer_phonecall( p, currenttime )
             events.add_event('phonecall ends', currenttime + p['length'], worker_index)
+            events.add_event('processing begins', currenttime + p['length'], worker_index)                             ### bætti  við // rebekka - veit ekki alveg hvað worker_index gerir
+            events.add_event('processing ends', currenttime + p['length'] + s.rand_processing_time(), worker_index)     
 
     elif e['type'] == 'phonecall ends':
-        people_counter -= 1
+        people_counter -= 1                              ### er þetta að láta einn starfsmann verða lausan? ef já þá má þetta ekki útaf han ner ekki laus fyrr en eftir processing phonecall
         # end a phonecall, update the statistics
         # add a check idle event
         p = workers.finish_phonecall( e['object id'] )
         p['end time'] = currenttime
-        phonecalls.finish_phonecall(p)
+        phonecalls.processing_phonecalls(p)              ### mín hugsun að þegar símtalið er búið þá byrjar starfsmaður að process-a
+                                                         ### spurning hvað kemur hér á eftir
+        phonecalls.finish_phonecall(p)                   ### komin hingað
         events.add_event('check', currenttime)
 
         event_time.append(e['time'])
