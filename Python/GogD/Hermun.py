@@ -5,9 +5,7 @@ import scipy.optimize as sci
 import math
 
 #======================================================================
-GeneralInfo = {"OpenAt":  0, "CloseAt": 500, "NumberOfStaff": 1} #Note: seinna meir væri hægt að gera þetta að falli með user interface-i
 
-clock = 0
 
 def UpdateClock(n):
 	global clock
@@ -23,7 +21,6 @@ def StartDay():
 	IsWorking: yes ef starfsmaðurinn er á vakt
 			   No ef starfsmaðurinn er búinn að vakt eða ekki byrjaður.
 	"""
-
 	global clock
 	clock = 0 #Núllstillir klukkuna í upphafi dags.
 
@@ -33,9 +30,7 @@ def StartDay():
 		#end = int(input('Staff ' + str(i+1) + ' ends: '))
 		begin = 0 #harðkóða upphafs og endatíma fyrir starfsmanninn til að byrja með.
 		end = 1000
-
-		staffId = "StaffID" + str(i+1)
-		staffId = {"StaffId": staffId,"Begins": begin, "Ends": end, "WorkinOn": "idle", 'IsWorking': "no"}
+		staffId = {"StaffId": i+1,"Begins": begin, "Ends": end, "WorkinOn": "NAN", 'IsWorking': "no"}
 		ListOfStaff.append(staffId)
 	return ListOfStaff;
 
@@ -48,10 +43,8 @@ def nytt_simtal(id,simtalInn):
 	C: Er í þjónustu.
 	D: Er búinn að fá þjónustu.
 	"""
-
-	lengdSimtal= int(np.random.exponential(scale=100, size=None)) # beta =100 parameter fyrir exponential 1/landa
-	ID = "CallID" + str(id+1)
-	simtal = {"ID": ID, 'status': "A", 'Lengd_Simtals':lengdSimtal, 'Bidtimi': "NAN", 'Simtal_Inn': simtalInn, 'Simtal_Lokid': "NAN"}
+	lengdSimtal= int(np.random.exponential(scale=10, size=None)) # beta =100 parameter fyrir exponential 1/landa
+	simtal = {"ID": id, 'status': "A", 'Lengd_Simtals':lengdSimtal, 'Bidtimi': "NAN", 'Simtal_Inn': simtalInn, 'Simtal_Lokid': "NAN", "staffID":'NAN'}
 	return (simtal);
 
 def GeneratePhoneCalls():
@@ -59,29 +52,24 @@ def GeneratePhoneCalls():
 	Þetta fall býr til lista af dictonarys af símtölum yfir daginn með því að nota fallið nytt_simtal.
 	Note: Hérna væri hægt að útfæra frekari líkindadreifinu á símtölinn þegar það er fyrir hendi
 	'''
-
-	millitimi = np.random.poisson(lam=5.0, size=100) #Fjldi simtala a dag er harðkóðað sem 100
-
+	millitimi = np.random.poisson(lam=5.0, size=10) #Fjldi simtala a dag er harðkóðað sem 100
 	ID = 0
 	simtalinn_sek = 0
 	simtol=[]
 	for i in millitimi:
+		ID += 1 
 		simtalinn_sek = simtalinn_sek + millitimi[i] 
 		simtal = nytt_simtal(ID, simtalinn_sek) 
-		ID += 1 
 		simtol.append(simtal) 
 	return simtol;
-
 
 def UpdateStatusOfPhoneCall():
 	'''
 	Þetta fall athugar hvort einhver sé búinn að slá á þráðinn á innhringiverið og uppfærir þá stöðuna á því símtali.
 	'''
-
 	for i in ListOfPhoneCalls:
-		if i['Simtal_Inn'] <= clock:
+		if i['Simtal_Inn'] == clock:
 			i["status"] = "B"
-
 
 def UpdateStatusOffStaff():
 	'''
@@ -96,11 +84,10 @@ def UpdateStatusOffStaff():
 
 	for i in ListOfStaff:
 		if(i["IsWorking"] == "no" and i["Begins"] >= clock):
-			i["IsWorking"] == "yes"
-		if(i["IsWorking"] == "yes" and i["Ends"] <= clock):
-			i["IsWorking"] == "no"
+			i["IsWorking"] = "yes"
+		elif(i["IsWorking"] == "yes" and i["Ends"] <= clock):
+			i["IsWorking"] = "no"
 
-		#if i["IsWorking"] == "yes" and i["WorkingOn"] != "idle": #Þetta is segð gæti mögulega átt heima undir fyrstu if statementinun í þessu falli.
 
 
 def find_next_phonecall(): 
@@ -110,9 +97,9 @@ def find_next_phonecall():
 
 	Note: Hér væri hægt að útfæra frekari kóða ef við viljum taka tillits til callback
 	'''
-
 	for i in ListOfPhoneCalls:
 		if i['status'] == 'B': #Hugsanlegt error, ef listinn er ekki alltaf raðaður eftir ID
+			i['status'] ='C'
 			return(i["ID"]);
 	return('NAN');
 
@@ -127,77 +114,68 @@ def find_next_Idle_staff(IdOfPhoneCall):
 	Note: Ef allir starfsmenn eru lausir þá fær fyrsti starfsmaðurinn alltaf verkefnið. Passa það þegar við skoðum tölfræðina
    	"""
 	for i in ListOfStaff: 
-		if i["IsWorking"] == "yes":
-			if i["WorkinOn"] == 'idel':
-				i["WorkinOn"] = IdOfPhoneCall
-				return;
-			else:
-				return;
-				#print("Feit villumelding i find_next_Idle_staff. Enginn starfsmadur laus")
+		if i["IsWorking"] == "yes" and i["WorkinOn"] == 'NAN':
+			i["WorkinOn"] = IdOfPhoneCall
+			print (i["StaffId"])
+			return(i["StaffId"])
 		else:
-			return;
-			#print("Feit villumelding i find_next_Idle_staff. Enginn starfsmadur a vakt")
+			return('None');
 
 
-#--------------------------------------------------------------------------------------
-
-#Föll sem eru ekki komin með hlutverk
-
-def set_wait_time_of_phonecall(IdOfPhoneCall, lengBid):
+def set_wait_time_of_phonecall(id_simtal,clock,free_staff):
 	"""
 	Fall sem uppfærir stöðuna á því hvenær símtalinu á að vera lokið. 
 
 	Mætti kannski útfæra það þannig að það uppfærir statusinn á símtalinu líka. Þ.e.a.s færi símtalið úr fasa B yfir í C
 	"""
 	for i in ListOfPhoneCalls:
-		if i["ID"] == IdOfPhoneCall:
-			i["Bidtimi"] = lengBid
+		if i["ID"] == id_simtal and i["status"]=='B':
+			i["Bidtimi"] = 100
+			i["status"] = 'C'
+			i["staffID"] = free_staff
 			return;
-	print("Villumelding i set_wait_time_of_phonecall") #Ætti aldrei að geta komist hingað.
 
 
-def set_end_time_of_phonecall(IdOfPhoneCall):
+def set_end_time_of_phonecall(id_simtal):
 	"""
-	Fall sem uppfærir stöðuna á því hvenær símtalinu á að vera lokið. 
+	Fall sem uppfærir stöðuna á því hvenær símtalinu á að vera lokið, starfsmaður losnar þá
 	"""
 	for i in ListOfPhoneCalls:
-		if i["ID"] == IdOfPhoneCall:
-				i["Simtal_Lokid"] = i["Simtal_Inn"] + i["Bidtimi"] + i["Lengd_Simtals"]
-				return;
-	print("Villumelding i set_end_time_of_phonecall") #Ætti aldrei að geta komist hingað.
+		if i["status"] == 'C' and i["ID"] == id_simtal:
+			i["Simtal_Lokid"] = 1000
+			i["status"] = 'D'
+	for i in ListOfStaff: 
+		if i["IsWorking"] == "yes"and i["WorkinOn"] == 'id_simtal':
+			i["WorkinOn"] ='NAN'
+			return;
 
-'''
-Föll sem eru ekki útfærð
-
-Fall eða if setning einhversstaðar sem uppfærir símtalið þannig það sé komið úr fasa B yfir C og uppfærir biðtímann. Getur notað set_wait_time_of_phonecall
-
-Fall sem athuga hvort starfsmaður sé búinn með símtalið og setur starfsmanninn þá sem idel. Það mætti kannski bara fara inn í fallið UpdateStatusOfStaff
-
-
-
-'''
-
-
+	
 #------------------------------------------------------------------------------------------------------------------------------------
-
+GeneralInfo = {"OpenAt":  0, "CloseAt": 1000, "NumberOfStaff": 1} #Note: seinna meir væri hægt að gera þetta að falli með user interface-i
+clock = 0
 ListOfStaff = StartDay()
 ListOfPhoneCalls = GeneratePhoneCalls()
+ListOfPhoneCalls.sort(key=lambda x: x["ID"])
 
 for i in ListOfPhoneCalls:
 	print(i)
 
-
 while clock <= GeneralInfo["CloseAt"]:
-	print(clock)
 	UpdateStatusOffStaff()
 	UpdateStatusOfPhoneCall()
+	simtalid=find_next_phonecall()
 
-	if find_next_phonecall() != 'NAN':
-		find_next_Idle_staff(find_next_phonecall())
-
+	if simtalid != 'NAN':
+		laus_starfsmadur =find_next_Idle_staff(simtalid)
+		if laus_starfsmadur != 'None':
+			set_wait_time_of_phonecall(simtalid,clock,laus_starfsmadur)
+			set_end_time_of_phonecall(simtalid)
+	
 	UpdateClock(1)
 
 
 for i in ListOfPhoneCalls:
 	print(i)
 
+for i in ListOfStaff:
+	print(i)

@@ -1,105 +1,61 @@
 import numpy
-import pandas as pd
-import csv
-
 
 class SettingsManager():
-	
-	def __init__(self):
-		self.starttime = 0
-		self.endtime = 43200
-		self.number_of_workers = 1
+    def __init__(self):
+        # Start/end time, number of workers
+        self.starttime = 0
+        self.endtime = 10*60*60
+        self.number_of_workers = 3
+        self.workers_details = []
 
-		self.l = []
-		self.lam = 0
-		self.mu = 0.2
-		self.rho = self.lam / self.mu
+        # Arrival rate
+        self.lam = 0.1
+        self.mu = 0.2
+        self.rho = self.lam / self.mu
+        self.lambdas = []
 
-	def rand_phonecall_length(self):
-		return numpy.random.exponential(1/self.mu)
+        # Post processing time
+        self.muj_process = 0.1
+        self.std_process = 0.005
 
-	def MakeWeek(self):
+    def rand_phonecall_length(self):
+        return numpy.random.exponential(1/self.mu)
 
-		week = {}
-		week['Day'] = {'Man':[], 'Tri':[],'Mid':[],'Fim':[],'Fos':[],'Lau':[], 'Sun':[] }
+    def rand_arrival_time(self, currenttime):
+        current_lam = self.get_lambda(currenttime)
+        return numpy.random.exponential(1/current_lam)
 
-		for i in range (0,13):
-			x = self.l[i]
-			week['Day']['Man'].append(x)
-		for i in range(13,26):
-			x = self.l[i]
-			week['Day']['Tri'].append(x)
-		for i in range(26,39):
-			x = self.l[i]
-			week['Day']['Mid'].append(x)
-		for i in range(39,52):
-			x = self.l[i]
-			week['Day']['Fim'].append(x)
-		for i in range(52,65):
-			x = self.l[i]
-			week['Day']['Fos'].append(x)
-		for i in range(65,78):
-			x = self.l[i]
-			week['Day']['Lau'].append(x)
-		for i in range(78,91):
-			x = self.l[i]
-			week['Day']['Sun'].append(x)
-		return week
+    def rand_reneg_time(self):  # á eftir að breyta
+        #return 5
+        return self.endtime+1
 
-	def rand_arrival_time(self, sec):
+    def rand_processing_time(self):
+        return numpy.random.normal(self.muj_process, self.std_process)
 
-		l = self.CollectList('MedaltalPerHour.csv')
-		week = self.MakeWeek()
-		day = self.ReturnDays(sec)
-		hour = self.ReturnHours(sec)
+    def setup_settings(self, settings_details):
+        self.starttime = settings_details['start time']
+        self.endtime = settings_details['end time']
 
+    def setup_workers(self, workers_details):
+        # Assume workers_details is a list of dicts, each dict contains all info for the worker (i.e. start,end, lunch, breaks)
+        self.number_of_workers = len(workers_details)
+        self.workers_details = workers_details
 
-		for i in week:
-			if (day < 1):
-				self.lam = week['Day']['Man'][hour]
-			elif (day >= 1 and day < 2):
-				self.lam = week['Day']['Tri'][hour]
-			elif (day >= 2 and day < 3):
-				self.lam = week['Day']['Mid'][hour]
-			elif (day >= 3 and day < 4):
-				self.lam = week['Day']['Fim'][hour]
-			elif (day >= 4 and day < 5):
-				self.lam = week['Day']['Fos'][hour]
-			elif (day >= 5 and day < 6):
-				self.lam = week['Day']['Lau'][hour]
-			elif (day >= 6 and day < 7):
-				self.lam = week['Day']['Sun'][hour]
+    def setup_lambda(self, lambdas):
+        # assume lambdas is a sorted list of dicts, each dict contains time and lambda value
+        self.lambdas = lambdas
 
-		self.lam = lam/3600
-		return numpy.random.exponential(1/self.lam)
+    def setup_processing(self, processing):
+        # Do we need anything else for the processing times?
+        self.muj_process = processing['mu']
+        self.std_process = processing['std']
 
-	def ReturnDays(self, sec):
-		x = int(sec/(3600*12))
-		if (x > 6):
-			x = x%7
-		return x
+    def get_lambda(self, currenttime):
+        #update self.lam if needed...
+        if len(self.lambdas) > 0:
+            if self.lambdas[0]['time'] <= currenttime:
+                l = self.lambdas.pop(0)
+                self.lam = l['lam']
+        return self.lam
 
-
-	def ReturnHours(self,sec):
-		x = int(sec/3600)
-		if (x > 12):
-			x = x%12
-		return x
-
-
-	def CollectList(self, filename):
-		file = open(filename,"r")
-		reader = csv.reader(file)
-		data = []
-		for row in reader:
-			data.append(row)
-		thelam = ''
-		for i in range (0,len(data)):
-			thelam = float(data[i][1].split('|')[1].strip())
-			self.l.append(thelam)
-		file.close()
-		return self.l
-
-
-		
 
