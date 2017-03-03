@@ -21,8 +21,9 @@ class SettingsManager():
     def rand_phonecall_length(self):
         return numpy.random.exponential(1/self.mu)
 
-    def rand_arrival_time(self):
-        return numpy.random.exponential(1/self.lam)
+    def rand_arrival_time(self, currenttime):
+        current_lam = self.get_lambda(currenttime)
+        return numpy.random.exponential(1/current_lam)
 
     def rand_reneg_time(self):  # á eftir að breyta
         #return 5
@@ -51,6 +52,10 @@ class SettingsManager():
 
     def get_lambda(self, currenttime):
         #update self.lam if needed...
+        if len(self.lambdas) > 0:
+            if self.lambdas[0]['time'] <= currenttime:
+                l = self.lambdas.pop(0)
+                self.lam = l['lam']
         return self.lam
 
 

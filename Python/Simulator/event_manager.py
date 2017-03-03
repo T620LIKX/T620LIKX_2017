@@ -21,7 +21,7 @@ class EventsManager:
 
     def initialize_events(self, workers, settings):
         self.add_event('simulation ends', settings.endtime)
-        self.add_event('phonecall arrive', settings.starttime + settings.rand_arrival_time())
+        self.add_event('phonecall arrive', settings.starttime + settings.rand_arrival_time(settings.starttime))
 
         for w in workers.workers:
             self.add_event('shift start', w['shift start'], object_id = w['id'])

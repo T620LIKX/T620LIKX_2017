@@ -66,7 +66,7 @@ def run_simulation(settings_details = None, workers_details = None, lambdas = No
         # - check
         if e['type'] == 'phonecall arrive':
             p = phonecalls.add_phonecall(e['id'], currenttime, s)
-            events.add_event('phonecall arrive', currenttime + s.rand_arrival_time())
+            events.add_event('phonecall arrive', currenttime + s.rand_arrival_time(currenttime))
             events.add_event('phonecall renege', currenttime + p['reneging time'], object_id = p['id'])
             events.add_event('check', currenttime)
 

@@ -31,13 +31,13 @@ counter = 0
 while currenttime < s.endtime:
     e = events.get_next_event()
     currenttime = e['time']
-    
+
     if e['type'] == 'phonecall arrive':
         counter += 1
         # create a new phonecall, add it to the queue
         # add an event for the next phonecall arrival
         phonecalls.add_phonecall(e['id'], currenttime, s)
-        events.add_event('phonecall arrive', currenttime + s.rand_arrival_time())
+        events.add_event('phonecall arrive', currenttime + s.rand_arrival_time(currenttime))
         events.add_event('check', currenttime)
         events.add_event('phonecall renegs', currenttime + s.rand_reneg_time(), phonecalls.phonecall_id)
 
@@ -45,7 +45,7 @@ while currenttime < s.endtime:
         event_counter.append(counter-1)
         event_time.append(e['time'])
         event_counter.append(counter) # appenda tölunni sem var á undan + 1
- 
+
 
     elif e['type'] == 'check':
         # find an idle worker and answer a phonecall
@@ -54,7 +54,7 @@ while currenttime < s.endtime:
             p['answer time'] = currenttime
             worker_index = workers.answer_phonecall( p, currenttime )
             events.add_event('phonecall ends', currenttime + p['length'], worker_index)
-    
+
     elif e['type'] == 'phonecall ends':
         counter -= 1
         # end a phonecall, update the statistics
