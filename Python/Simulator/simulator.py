@@ -22,7 +22,7 @@ workers.add_workers(s)
 events.initialize_events(workers, s)
 
 # simulation loop
-currenttime = s.starttime
+currenttime = s.starttime()
 lasttime = currenttime
 
 while currenttime < s.endtime:
@@ -33,7 +33,7 @@ while currenttime < s.endtime:
         # create a new phonecall, add it to the queue
         # add an event for the next phonecall arrival
         phonecalls.add_phonecall(e['id'], currenttime, s)
-        events.add_event('phonecall arrive', currenttime + s.rand_arrival_time())
+        events.add_event('phonecall arrive', currenttime + s.rand_arrival_time(currenttime))
         events.add_event('check', currenttime)
 
     elif e['type'] == 'check':
@@ -56,6 +56,7 @@ while currenttime < s.endtime:
     # collect statistics
     stats.update_statistics(currenttime, lasttime, events, phonecalls, workers, s)
     lasttime = currenttime
+
 
 
 # final stats collection
