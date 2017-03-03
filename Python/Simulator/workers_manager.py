@@ -1,3 +1,4 @@
+import data_structures as ds
 
 class WorkersManager:
 
@@ -8,23 +9,27 @@ class WorkersManager:
 
     def add_workers(self, settings):
         for i in range(settings.number_of_workers):
-            self.create_worker(settings)
+            self.create_worker(settings, i)
 
-    def create_worker(self, settings):
+    def create_worker(self, settings, index):
         w = {}
         w['id'] = self.worker_id
         self.worker_id += 1
         w['idle'] = False
         w['phonecall'] = 0
         w['idletime'] = 0
-        w['status'] = 'notworking'  # idle, incall, inlunch, notworking, aftercall,break
-        w['worktime'] = 0 # vinna lengur en x þá kaffi / mat 
-        w['breaktime'] = 0 # pásan er bara 20 mín eða ehv 
-        w['processing'] = 0 # urvinnsla simtals
+        w['status'] = 'notworking'  # idle, incall, notworking, processing, break
+        w['check overdue'] = False   # true if the worker should have taken a break, lunch or ended shift, but is still stuck in a phonecall
+
+        w['breaks'] = ds.SortedQueue()
+        # here we can add breaks, lunch and so on.
+        #w['breaks'].enqueue( {'time': 3*60*60, 'length': 30*60, 'type':'lunch'} )
+        #w['breaks'].enqueue( {'time': 1*60*60, 'length': 15*60, 'type':'coffee'} )
+        #w['breaks'].enqueue( {'time': 5*60*60, 'length': 15*60, 'type':'coffee'} )
+
+        w['shift start'] = settings.starttime
+        w['shift end'] = settings.endtime
         self.workers.append(w)
-        # búa til kannski svolítið harðkóðað en þetta er hugmyndin
-
-
 
     def get_idle_worker_id(self):
         idleworkerindex = -1
@@ -43,69 +48,79 @@ class WorkersManager:
 
     def answer_phonecall(self, phonecall, currenttime):
         i = self.get_idle_worker_id()
+        w = self.workers[i]
         phonecall['answer time'] = currenttime
-        self.workers[i]['phonecall'] = phonecall
-        self.workers[i]['idle'] = False
-        self.workers[i]['status'] = 'incall'
+        w['phonecall'] = phonecall
+        w['idle'] = False
+        w['status'] = 'incall'
         return i
 
-    def start_processing(self, worker_id):                         ### baetti vid naestu 2 follum skoða þau // rebekka
-        p = self.workers[worker_id]['phonecall']
-        self.workers[worker_id]['phonecall'] = phonecall                     
-        self.workers[worker_id]['idle'] = False                      
-        self.workers[worker_id]['status'] = 'processing'  
+    # When a worker finishes a phonecall, he/she automatically starts the post processing
+    def finish_phonecall(self, worker_id):
+        w = self.workers[worker_id]
+        p = w['phonecall']
+        w['phonecall'] = 0
+        w['idle'] = False
+        w['status'] = 'processing'
         return p
 
     def finish_processing(self, worker_id):
-        p = self.workers[worker_id]['phonecall']
-        self.workers[worker_id]['processing'] = 0                     
-        self.workers[worker_id]['idle'] = True                      
-        self.workers[worker_id]['status'] = 'idle'                  
-        return p
+        w = self.workers[worker_id]
+        w['idle'] = True
+        w['status'] = 'idle'
 
-    def finish_phonecall(self, worker_id):
-        p = self.workers[worker_id]['phonecall']
-        self.workers[worker_id]['phonecall'] = 0
-        self.workers[worker_id]['idle'] = True
-        self.workers[worker_id]['status'] = 'idle'
-        return p
-
-    def update_idletime(self, time_passed): ## kannski bara hægt að breyta í uptade_status
+    def update_idletime(self, time_passed):
         for i in range(len(self.workers)):
             self.workers[i]['idletime'] += time_passed * self.workers[i]['idle']
 
-    def update_status(self,event,time_passed,id = -1):
-        for i in range(len(self.workers)):
-            if event == 'worker_start':
-                self.workers[i]['status'] = 'idle'
-                self.workers[i]['idle'] = True
-                self.workers[i]['worktime'] = 0
+    def start_shift(self, worker_id):
+        w = self.workers[worker_id]
+        w['idle'] = True
+        w['status'] = 'idle'
 
-            elif event == 'worker_end':
-                self.workers[i]['status'] = 'notworking'
-                self.workers[i]['idle'] = False
+    def end_shift(self, worker_id):
+        w = self.workers[worker_id]
+        if w['idle']:
+            w['idle'] = False
+            w['status'] = 'notworking'
+            return True
+        else:
+            w['check overdue'] = True
+            return False
 
-            elif event == 'break':
-                self.workers[i]['status'] = 'break'
-                self.workers[i]['idle'] = False
-                self.workers[i]['worktime'] = 0
+    def start_break(self, worker_id):
+        w = self.workers[worker_id]
+        if w['idle']:
+            b = w['breaks'].dequeue()
+            w['idle'] = False
+            w['status'] = 'break'
+            return b['length']
+        else:
+            w['check overdue'] = True
+            return -1
 
-            elif event == 'break_done':
-                self.workers[i]['status'] = 'idle'
-                self.workers[i]['idle'] = True
-                self.workers[i]['worktime'] = 0
-                self.workers[i]['breaktime'] = 0
-            
-            elif event == 'lunch':
-                self.workers[i]['status'] = 'lunch'
-                self.workers[i]['idle'] = False
-                self.workers[i]['worktime'] = 0
+    def end_break(self, worker_id):
+        w = self.workers[worker_id]
+        w['idle'] = True
+        w['status'] = 'idle'
 
-            elif event == 'processing':                  ## skoða þetta útaf eventið er ekki búið til í event_manager // rebekka
-                self.workers[i]['status'] = 'processing'
-                self.workers[i]['idle'] = False
-                self.workers[i]['worktime'] = 0
+    def check_overdue(self, currenttime):
+        checklist = []
+        for w in self.workers:
+            if w['check overdue']:
+                if currenttime >= w['shift end']:
+                    self.end_shift(w['id'])
+                elif currenttime >= w['breaks'][0]['time']:
+                    breaklength = self.start_break(w['id'])
+                    checklist.append({'event type':'break end', 'length': breaklength, 'worker id': w['id']})
+                w['check overdue'] = False
+        return checklist
+
+    def __str__(self):
+        output = 'Workers:'
+        for w in self.workers:
+            output = output + '\n' + str(w)
+        return output
 
 
 
-      

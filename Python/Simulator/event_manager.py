@@ -8,24 +8,26 @@ class EventsManager:
         self.finished_events = ds.Queue()
         self.event_id = 0
 
-    def add_event(self, event_type, event_time, object_id = -1):
+    def add_event(self, event_type, event_time, object_id = -1, phonecall_action = 'none'):
         e = {}
         e['id'] = self.event_id
         self.event_id += 1
         e['type'] = event_type
         e['time'] = event_time
         e['object id'] = object_id
-    
+        e['phonecall action'] = phonecall_action
+
         self.events.enqueue(e)
 
     def initialize_events(self, workers, settings):
         self.add_event('simulation ends', settings.endtime)
         self.add_event('phonecall arrive', settings.starttime + settings.rand_arrival_time())
-        self.add_event('worker', 500, 'worker_start')
-        self.add_event('worker', 9500, 'worker_end')
-        self.add_event('worker', 4000, 'lunch')
-        self.add_event('worker', 2500, 'break')
-        self.add_event('worker', 6500, 'break')
+
+        for w in workers.workers:
+            self.add_event('shift start', w['shift start'], object_id = w['id'])
+            self.add_event('shift end', w['shift end'], object_id = w['id'])
+            for b in w['breaks'].items:
+                self.add_event('break start', b['time'], object_id = w['id'])
 
     def get_next_event(self):
         if self.length() > 0:
@@ -38,3 +40,6 @@ class EventsManager:
 
     def isempty(self):
         return isempty(self.events)
+
+    def __str__(self):
+        return 'Events:'+str(self.events)

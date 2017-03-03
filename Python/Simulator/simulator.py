@@ -7,110 +7,171 @@ import statistics_manager as sm
 import output_manager as om
 import pandas as pd
 import matplotlib.pyplot as plt
+import numpy
 
-#main
-events = em.EventsManager()
-phonecalls = pm.PhonecallsManager()
-workers = wm.WorkersManager()
-stats = sm.StatisticsManager()
 
-# settings
-s = settingsmanager.SettingsManager()
+#numpy.random.seed(12345)
 
-# initialization
-workers.add_workers(s)
-events.initialize_events(workers, s)
+# Run simulation function
+def run_simulation(settings_details = None, workers_details = None, lambdas = None, processing = None, DEBUG = False, SHOWGRAPH = False):
+    events = em.EventsManager()
+    phonecalls = pm.PhonecallsManager()
+    workers = wm.WorkersManager()
+    stats = sm.StatisticsManager()
 
-# simulation loop
-currenttime = s.starttime
-lasttime = currenttime
+    # settings
+    s = settingsmanager.SettingsManager()
 
-# Lists for plotting
-event_time = [0]
-event_counter = [0]
-people_counter = 0
-reneg_time =[0]
-reneg_counter = [0]
+    if settings_details:
+        s.setup_settings(settings_details)
+    if workers_details:
+        s.setup_workers(workers_details)
+    if lambdas:
+        s.setup_lambda(lambdas)
+    if processing:
+        s.setup_processing(processing)
 
-while currenttime < s.endtime:
-    e = events.get_next_event()
-    currenttime = e['time']
+    # initialization
+    workers.add_workers(s)
+    events.initialize_events(workers, s)
 
-    if e['type'] == 'phonecall arrive':
-        people_counter += 1
-        # create a new phonecall, add it to the queue
-        # add an event for the next phonecall arrival
-        phonecalls.add_phonecall(e['id'], currenttime, s)
-        events.add_event('phonecall arrive', currenttime + s.rand_arrival_time())
-        events.add_event('check', currenttime)
-        events.add_event('phonecall renegs', currenttime + s.rand_reneg_time(), phonecalls.latest_id() ) # off by 1 villa sem þarf að laga 
-        event_time.append(e['time'])
-        event_counter.append(people_counter-1)
-        event_time.append(e['time'])
-        event_counter.append(people_counter) # appenda tölunni sem var á undan + 1
- 
-
-    elif e['type'] == 'check':
-        # find an idle worker and answer a phonecall
-        if phonecalls.phonecalls_in_queue() > 0 and workers.workers_available():
-            p = phonecalls.next_phonecall()
-            p['answer time'] = currenttime
-            worker_index = workers.answer_phonecall( p, currenttime )
-            events.add_event('phonecall ends', currenttime + p['length'], worker_index)
-            events.add_event('processing begins', currenttime + p['length'], worker_index)                             ### bætti  við // rebekka - veit ekki alveg hvað worker_index gerir
-            events.add_event('processing ends', currenttime + p['length'] + s.rand_processing_time(), worker_index)     
-
-    elif e['type'] == 'phonecall ends':
-        people_counter -= 1                              ### er þetta að láta einn starfsmann verða lausan? ef já þá má þetta ekki útaf han ner ekki laus fyrr en eftir processing phonecall
-        # end a phonecall, update the statistics
-        # add a check idle event
-        p = workers.finish_phonecall( e['object id'] )
-        p['end time'] = currenttime
-        phonecalls.processing_phonecalls(p)              ### mín hugsun að þegar símtalið er búið þá byrjar starfsmaður að process-a
-                                                         ### spurning hvað kemur hér á eftir
-        phonecalls.finish_phonecall(p)                   ### komin hingað
-        events.add_event('check', currenttime)
-
-        event_time.append(e['time'])
-        event_counter.append(people_counter+1)
-        event_time.append(e['time'])
-        event_counter.append(people_counter)
-    
-    elif e['type'] == 'phonecall renegs':
-        phonecalls.reneg(e['object id'])
-        for key in phonecalls.reneging_phonecalls:
-           if (key['arrival'] + key['Reneging time']) == e['time']:
-            people_counter -= 1
-            event_time.append(e['time'])
-            event_counter.append(people_counter+1)
-            event_time.append(e['time'])
-            event_counter.append(people_counter)
-
-            reneg_time.append(e['time'])
-            reneg_counter.append(people_counter+1)
-
-        
-
-    elif e['type'] == 'worker':  # event type er worker þá þarf að athuga hvað er að gerast
-        workers.update_status(e['object id'],currenttime) # uppfærum status á starfsmanni
-        if e['object id'] == 'break' or e['object id'] == 'lunch' : # ef hann er að fara í pásu þarf hann að byrja vinna aftur
-            events.add_event('worker', currenttime+500,'break_done') # stillum hér að hann sé 500 sek í pásu
-        events.add_event('check', currenttime) # þarf þetta ekki alltaf að vera ?
-
-        
-    # collect statistics
-    stats.update_statistics(currenttime, lasttime, events, phonecalls, workers, s)
+    # simulation loop
+    currenttime = s.starttime
     lasttime = currenttime
 
 
-# final stats collection
-stats.calculate_statistics(phonecalls, workers, s)
+    while currenttime < s.endtime:
 
-#output
-om.show_output(stats, events, workers, s)
+        if DEBUG:
+            print('\nCurrent time: {} -------------------------------------'.format(currenttime))
+            print(events)
+            print(phonecalls)
+            print(workers)
+            print('\n')
 
-# Plotting commands
+        e = events.get_next_event()
+        currenttime = e['time']
 
-plt.plot(event_time,event_counter)
-plt.plot(reneg_time,reneg_counter,'o')
-plt.show()
+        # collect statistics
+        stats.update_statistics(currenttime, lasttime, e, phonecalls, workers, s)
+
+        if SHOWGRAPH:
+            stats.update_statistics_graph(currenttime, lasttime, e, phonecalls, workers, s)
+
+        # ---------- PHONECALL ARRIVES ----------------
+        # create a new phonecall, add it to the queue
+        # add an event for:
+        # - next phonecall arrival
+        # - renegeing time of the current phonecall
+        # - check
+        if e['type'] == 'phonecall arrive':
+            p = phonecalls.add_phonecall(e['id'], currenttime, s)
+            events.add_event('phonecall arrive', currenttime + s.rand_arrival_time())
+            events.add_event('phonecall renege', currenttime + p['reneging time'], object_id = p['id'])
+            events.add_event('check', currenttime)
+
+
+        # ------------ CHECK --------------------
+        # Check if following situations are available and act if possible:
+        # - a worker is overdue a break/lunch/shift end
+        # - a phonecall is waiting and a worker is idle
+        elif e['type'] == 'check':
+            checklist = workers.check_overdue(currenttime)
+            for c in checklist:
+                events.add_event(c['event type'], currenttime + c['length'], object_id = c['worker id'])
+
+            # find an idle worker and a waiting phonecall, if we get both, let the worker answer the phonecall
+            while phonecalls.phonecalls_in_queue() > 0 and workers.workers_available():
+                p = phonecalls.next_phonecall()
+                p['answer time'] = currenttime
+                worker_index = workers.answer_phonecall( p, currenttime )
+                events.add_event('phonecall ends', currenttime + p['length'], object_id = worker_index)
+                events.add_event('processing ends', currenttime + p['length'] + p['processing time'], object_id = worker_index)
+
+
+        # ------------- PHONECALL ENDS ----------------
+        # End the phonecall, the worker starts the processing
+        # Don't add check since the worker is not free
+        elif e['type'] == 'phonecall ends':
+            p = workers.finish_phonecall( e['object id'] )
+            p['end time'] = currenttime
+            phonecalls.finish_phonecall(p)
+
+
+        # ---------------- PROCESSINGS ENDS --------------
+        # Processing ends so now the worker becomes idle
+        # add a check event
+        elif e['type'] == 'processing ends':
+            workers.finish_processing( e['object id'])
+            events.add_event('check', currenttime)
+
+
+        # ---------------- PHONECALL RENEGES --------------
+        # See if the phonecall is still waiting.  If so, renege the phonecall and adjust the settings for the statistics collection
+        # Don't add check since nothing else happened
+        elif e['type'] == 'phonecall renege':
+            if phonecalls.renege(e['object id']):
+                e['phonecall action'] = 'renege'
+
+
+        # ----------------- START SHIFT -----------------
+        # Worker is starting a shift so he/she becomes idle
+        # Add a check to see if there is anything to do.
+        elif e['type'] == 'shift start':
+            workers.start_shift(e['object id'])
+            events.add_event('check', currenttime)
+
+
+        # ------------------ END SHIFT ------------------
+        # if the worker is idle, stop the shift
+        # otherwise add an overdue check.
+        elif e['type'] == 'shift end':
+            workers.end_shift(e['object id'])
+
+
+        # ------------------ START BREAK ----------------
+        # check if the worker is ready to start the break
+        # if yes, then start break and set an event for break end
+        # else, set the worker as overdue for a break.
+        elif e['type'] == 'break start':
+            break_length = workers.start_break(e['object id'])
+            if break_length > 0:
+                events.add_event('break end', currenttime + break_length, object_id = e['object id'])
+
+
+        # ------------------ END BREAK ------------------
+        # end the break, the worker becomes idle and we add a check
+        elif e['type'] == 'break end':
+            workers.end_break(e['object id'])
+            events.add_event('check', currenttime)
+
+
+        # ------------------ SIMULATION ENDS OR UNKNOWN -----------
+        # if the simulation ends, we do nothing.  Otherwise print a warning if we don't recognize the event type
+        elif not e['type'] == 'simulation ends':
+            print('WARNING: Unkown event type: {}'.format(e))
+
+
+        # collect statistics
+        if SHOWGRAPH:
+            stats.update_statistics_graph(currenttime, lasttime, e, phonecalls, workers, s)
+
+        # update the time for next iteration
+        lasttime = currenttime
+
+
+
+    # final stats collection
+    stats.calculate_statistics(phonecalls, workers, s)
+
+    #output
+    om.show_output(stats, events, workers, s)
+
+    # Plotting commands
+    if SHOWGRAPH:
+        plt.plot(stats.phonecall_queue_time, stats.phonecall_queue_counter)
+        plt.plot(stats.reneg_time, stats.reneg_counter,'o')
+        plt.show()
+
+if __name__ == '__main__':
+    run_simulation()

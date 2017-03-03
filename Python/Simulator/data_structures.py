@@ -20,6 +20,12 @@ class Queue:
         while isempty() != True:
             dequeue()
 
+    def __str__(self):
+        output = ''
+        for i in self.items:
+            output = output + '\n' + str(i)
+        return output
+
 
 class SortedQueue:
     def __init__(self):
@@ -42,4 +48,10 @@ class SortedQueue:
     def empty(self):
         while isempty() != True:
             dequeue()
+
+    def __str__(self):
+        output = ''
+        for i in self.items:
+            output = output + '\n' + str(i)
+        return output
 
