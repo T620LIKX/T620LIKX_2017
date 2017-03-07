@@ -81,6 +81,13 @@ def run_simulation(settings_details = None, workers_details = None, lambdas = No
                 events.add_event(c['event type'], currenttime + c['length'], object_id = c['worker id'])
 
             # find an idle worker and a waiting phonecall, if we get both, let the worker answer the phonecall
+            while phonecalls.phonecalls_in_priority_queue() > 0 and workers.workers_available():
+                p = phonecalls.next_priority()
+                p['answer time'] = currenttime
+                worker_index = workers.answer_phonecall(p, currenttime )
+                events.add_event('phonecall ends', currenttime + p['length'], object_id = worker_index)
+                events.add_event('processing ends', currenttime + p['length'] + p['processing time'], object_id = worker_index)
+
             while phonecalls.phonecalls_in_queue() > 0 and workers.workers_available():
                 p = phonecalls.next_phonecall()
                 p['answer time'] = currenttime
