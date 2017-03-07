@@ -23,8 +23,12 @@ class PhonecallsManager:
         phonecall['answer time'] = 0
         phonecall['end time'] = 0
         phonecall['processing time'] = settings.rand_processing_time()
-
-        self.phonecalls.enqueue(phonecall)
+        phonecall['priority'] = 0  # Gerum ráð fyrir að forgangurinn hefur gildið 0 fyrir venjulegt símtal eða 1.
+        
+        if phonecall['priority'] ==0:
+            self.phonecalls.enqueue(phonecall)
+        else:
+            self.priority_calls.enqueue(phonecall)
 
         return phonecall
 
@@ -32,11 +36,21 @@ class PhonecallsManager:
         p = self.phonecalls.dequeue()
         return p
 
+    def next_priority(self):
+        p = self.priority_calls.dequeue()
+        return p
+
+    def finish_priority(self, phonecall):
+        self.finished_phonecalls.append(phonecall)
+
     def finish_phonecall(self, phonecall):
         self.finished_phonecalls.append(phonecall)
 
     def phonecalls_in_queue(self):
         return self.length() > 0
+    
+    def phonecalls_in_priority_queue(self):
+        return len(self.priority_calls.items) > 0
 
     def length(self):
         return self.phonecalls.length()
@@ -47,20 +61,30 @@ class PhonecallsManager:
         return self.phonecalls.items[-1]['id']
 
     def renege(self, renege_id):
-        renege_index = self.find_phonecall(renege_id)
+        (renege_index, p)= self.find_phonecall(renege_id)
         if renege_index != -1:
-            phonecall = self.phonecalls.items.pop(renege_index)
-            self.reneging_phonecalls.append(phonecall)
+            if p==0:
+                phonecall = self.phonecalls.items.pop(renege_index)
+                self.reneging_phonecalls.append(phonecall)
+            elif p==1:
+                phonecall = self.priority_calls.items.pop(renege_index)
+                self.reneging_phonecalls.append(phonecall)
             return True
 
         return False
 
     #Fall sem finnur indexinn á símtalinu sem renegar, skilar -1 ef símtalið er ekki lengur í röðinni
     def find_phonecall(self, phonecall_id):
+        A=0
         if len(self.phonecalls.items) > 0:
             for i in range(0, len(self.phonecalls.items)):
                 if (self.phonecalls.items[i]['id'] == phonecall_id):
-                    return i
+                    return (i,A)
+        if len(self.priority_calls.itmes) >0:
+            for i in range(0, len(self.priority_calls.itmes)):
+                if (self.priority_calls[i]['id'] == phonecall_id):
+                    A=1
+                    return(i,A)
         return -1
 
     #lengd á reneging röðini
