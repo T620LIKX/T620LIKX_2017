@@ -12,7 +12,10 @@ import numpy
 
 #numpy.random.seed(12345)
 
-# Run simulation function
+# run_simlation function is called by sim_runner.py where the parameters are defined. 
+# If they are not defined, the variables will take the predefined values (None / False)
+
+# Run simulation function:
 def run_simulation(settings_details = None, workers_details = None, lambdas = None, processing = None, DEBUG = False, SHOWGRAPH = False):
     events = em.EventsManager()
     phonecalls = pm.PhonecallsManager()
@@ -22,6 +25,8 @@ def run_simulation(settings_details = None, workers_details = None, lambdas = No
     # settings
     s = settingsmanager.SettingsManager()
 
+    # These if statements are the parameters to the run_simulation function. If the variables are defined (not empty), the if statements are True
+    # All of those are functions from the Settings manager that take a specific parameter and initializes.
     if settings_details:
         s.setup_settings(settings_details)
     if workers_details:
@@ -42,6 +47,7 @@ def run_simulation(settings_details = None, workers_details = None, lambdas = No
 
     while currenttime < s.endtime:
 
+        # If DEBUG is True: information is constantly printed to help identify the bug
         if DEBUG:
             print('\nCurrent time: {} -------------------------------------'.format(currenttime))
             print(events)
@@ -49,12 +55,16 @@ def run_simulation(settings_details = None, workers_details = None, lambdas = No
             print(workers)
             print('\n')
 
+        # Get the next event from the event list and store it in the variable e. See eventmanager for a closer look.
+        # Updates the current time to the time of the event we are looking at. 
         e = events.get_next_event()
         currenttime = e['time']
 
         # collect statistics
         stats.update_statistics(currenttime, lasttime, e, phonecalls, workers, s)
 
+
+        # if true: gathers information for plotting the status of the que and reneging
         if SHOWGRAPH:
             stats.update_statistics_graph(currenttime, lasttime, e, phonecalls, workers, s)
 
@@ -64,6 +74,7 @@ def run_simulation(settings_details = None, workers_details = None, lambdas = No
         # - next phonecall arrival
         # - renegeing time of the current phonecall
         # - check
+
         if e['type'] == 'phonecall arrive':
             p = phonecalls.add_phonecall(e['id'], currenttime, s)
             events.add_event('phonecall arrive', currenttime + s.rand_arrival_time(currenttime))

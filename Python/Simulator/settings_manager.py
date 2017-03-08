@@ -32,6 +32,9 @@ class SettingsManager():
     def rand_processing_time(self):
         return numpy.random.normal(self.muj_process, self.std_process)
 
+        # ----------- SETUP SETTINGS / WORKERS / LAMBDA / PROCESSING ------- 
+        # Used in sim_runner.py as parameters for run_simulation() in simulation.py
+
     def setup_settings(self, settings_details):
         self.starttime = settings_details['start time']
         self.endtime = settings_details['end time']
@@ -50,8 +53,10 @@ class SettingsManager():
         self.muj_process = processing['mu']
         self.std_process = processing['std']
 
+        # ----------- GET LAMBDA ------- 
+        # Go get the lambda, you tiger.
     def get_lambda(self, currenttime):
-        #update self.lam if needed...
+        # update self.lam if needed...
         if len(self.lambdas) > 0:
             if self.lambdas[0]['time'] <= currenttime:
                 l = self.lambdas.pop(0)
