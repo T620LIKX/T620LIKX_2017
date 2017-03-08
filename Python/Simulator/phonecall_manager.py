@@ -23,7 +23,7 @@ class PhonecallsManager:
         phonecall['answer time'] = 0
         phonecall['end time'] = 0
         phonecall['processing time'] = settings.rand_processing_time()
-        phonecall['priority'] = 0  # Gerum ráð fyrir að forgangurinn hefur gildið 0 fyrir venjulegt símtal eða 1.
+        phonecall['priority'] = 0  # Gerum ráð fyrir að forgangurinn hefur gildið 0 fyrir venjulegt símtal eða 1 á eftir að búa til dreifingu fyrir þetta.
         
         if phonecall['priority'] ==0:
             self.phonecalls.enqueue(phonecall)
@@ -55,6 +55,8 @@ class PhonecallsManager:
     def length(self):
         return self.phonecalls.length()
 
+    def length_prio(self):
+        return self.priority_calls.length()
     #Allt hérna fyrir neðan er viðbót vegna reneging
     #fall sem sækir id á því símtali sem kom síðast í röðina
     def latest_id(self):
