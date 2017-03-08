@@ -12,7 +12,8 @@ class StatisticsManager:
         self.average_wait = 0
         self.max_wait = 0
         self.phonecalls_answered = 0
-
+        self.average_pqueue_length = 0
+        self.max_pqueue_length = 0
         # Lists for plotting
         self.phonecall_queue_time = [0,]
         self.phonecall_queue_counter = [0,]
@@ -28,7 +29,8 @@ class StatisticsManager:
 
         self.average_queue_length += phonecalls.length() * (currenttime - lasttime)
         self.max_queue_length = max( self.max_queue_length, phonecalls.length())
-
+        self.average_pqueue_length += phonecalls.length_prio() * (currenttime - lasttime)
+        self.max_pqueue_length = max(self.max_pqueue_length, phonecalls.length_prio())
     def update_statistics_graph(self, currenttime, lasttime, event, phonecalls, workers, settings):
         if not (self.phonecall_queue_time[-1] == event['time'] and self.phonecall_queue_counter[-1] == phonecalls.length()):
             self.phonecall_queue_time.append(event['time'])
