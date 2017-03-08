@@ -7,6 +7,9 @@ def show_output(stats, events, workers, settings):
     print('Max wait: {}'.format(stats.max_wait))
     print('Average queue length: {}'.format(stats.average_queue_length / settings.endtime))
     print('Max queue length: {}'.format(stats.max_queue_length))
+    print('Average priority queue lenght: {}'.format(stats.average_pqueue_length))
+    print('Max priority queue length: {}'.format(stats.max_pqueue_length))
+
     for w in workers.workers:
         print('Worker {}, busy ratio: {}'.format(w['id'], (settings.endtime - w['idletime']) / settings.endtime ))
 
