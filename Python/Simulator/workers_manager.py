@@ -8,14 +8,14 @@ class WorkersManager:
         self.worker_id = 0
 
         # ----------- ADD WORKER -------
-        # Function loops through the number of workers and creates as many 
+        # Function loops through the number of workers and creates as many
         # workers as needed, by calling create_worker.
     def add_workers(self, settings):
         for i in range(settings.number_of_workers):
             self.create_worker(settings, i)
 
         # ----------- CREATE  -------
-        # Creates one worker and initializes its attributes. 
+        # Creates one worker and initializes its attributes.
     def create_worker(self, settings, index):
         w = {}
         w['id'] = self.worker_id
@@ -27,16 +27,16 @@ class WorkersManager:
         w['check overdue'] = False   # true if the worker should have taken a break, lunch or ended shift, but is still stuck in a phonecall
 
         # Comment needed for clarity!
-        # w['breaks'] is  a column that uses the class SortedQueue() to create a queued list for breaks. 
+        # w['breaks'] is  a column that uses the class SortedQueue() to create a queued list for breaks.
         w['breaks'] = ds.SortedQueue() #
         # here we can add breaks, lunch and so on.
         #w['breaks'].enqueue( {'time': 3*60*60, 'length': 30*60, 'type':'lunch'} )
         #w['breaks'].enqueue( {'time': 1*60*60, 'length': 15*60, 'type':'coffee'} )
         #w['breaks'].enqueue( {'time': 5*60*60, 'length': 15*60, 'type':'coffee'} )
 
-        w['shift start'] = settings.starttime 
+        w['shift start'] = settings.starttime
         w['shift end'] = settings.endtime
-        self.workers.append(w) 
+        self.workers.append(w)
 
 
         # ----------- GET IDLE WORKER  -------
@@ -87,7 +87,7 @@ class WorkersManager:
 
 
         # ----------- FINISH PROCESSING  -------
-        # When a worker finishes processing, its attributes are updated. 
+        # When a worker finishes processing, its attributes are updated.
     def finish_processing(self, worker_id):
         w = self.workers[worker_id]
         w['idle'] = True
@@ -103,14 +103,14 @@ class WorkersManager:
             self.workers[i]['idletime'] += time_passed * self.workers[i]['idle']
 
 
-        # ----------- WORKER STARTS SHIFT -------      
-        # If the event is "shift starts". Worker is now ready to work.      
+        # ----------- WORKER STARTS SHIFT -------
+        # If the event is "shift starts". Worker is now ready to work.
     def start_shift(self, worker_id):
         w = self.workers[worker_id]
         w['idle'] = True
         w['status'] = 'idle'
 
-        # ----------- WORKER ENDS SHIFT -------   
+        # ----------- WORKER ENDS SHIFT -------
         # End the workers shift. If still in phonecall, make check overdue: True
     def end_shift(self, worker_id):
         w = self.workers[worker_id]
@@ -122,8 +122,8 @@ class WorkersManager:
             w['check overdue'] = True
             return False
 
-        # ----------- WORKER STARTS BREAK -------  
-        # Returns the length of the break and updates the workers attributes. 
+        # ----------- WORKER STARTS BREAK -------
+        # Returns the length of the break and updates the workers attributes.
         # If the worker is not idle, its going to check overdue (and returns an error)
     def start_break(self, worker_id):
         w = self.workers[worker_id]
@@ -136,19 +136,19 @@ class WorkersManager:
             w['check overdue'] = True
             return -1
 
-        # ----------- WORKER STARTS BREAK -------  
+        # ----------- WORKER STARTS BREAK -------
         # Workers break ends. Worker returns to idle.
     def end_break(self, worker_id):
         w = self.workers[worker_id]
         w['idle'] = True
         w['status'] = 'idle'
 
-        # ----------- WORKER STARTS BREAK ------- 
+        # ----------- WORKER STARTS BREAK -------
         # >>>>>>>>>>>>>> Comments needed <<<<<<<<<<<<<<<<<
     def check_overdue(self, currenttime):
         checklist = []
         for w in self.workers:
-            if w['check overdue']:
+            if w['check overdue'] and w['idle']:
                 if currenttime >= w['shift end']:
                     self.end_shift(w['id'])
                 elif currenttime >= w['breaks'][0]['time']:
