@@ -20,6 +20,9 @@ class Queue:
         while isempty() != True:
             dequeue()
 
+    def __getitem__(self,index):
+        return self.items[index]
+
     def __str__(self):
         output = ''
         for i in self.items:
@@ -27,6 +30,7 @@ class Queue:
         return output
 
 
+# \/\/\/ ~~~~~!! ------Comment needed ------ !!~~~~~ \/\/\/
 class SortedQueue:
     def __init__(self):
         self.items = []
@@ -48,6 +52,9 @@ class SortedQueue:
     def empty(self):
         while isempty() != True:
             dequeue()
+
+    def __getitem__(self,index):
+        return self.items[index]
 
     def __str__(self):
         output = ''
