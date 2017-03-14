@@ -8,6 +8,7 @@ import output_manager as om
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy
+import sys
 
 
 #numpy.random.seed(12345)
@@ -16,7 +17,7 @@ import numpy
 # If they are not defined, the variables will take the predefined values (None / False)
 
 # Run simulation function:
-def run_simulation(settings_details = None, workers_details = None, lambdas = None, processing = None, DEBUG = False, SHOWGRAPH = False):
+def run_simulation(settings_details = None, workers_details = None, lambdas = None, processing = None, DEBUG = False, SHOWGRAPH = False, SHOWOUTPUT = False):
     events = em.EventsManager()
     phonecalls = pm.PhonecallsManager()
     workers = wm.WorkersManager()
@@ -183,7 +184,12 @@ def run_simulation(settings_details = None, workers_details = None, lambdas = No
     stats.calculate_statistics(phonecalls, workers, s)
 
     #output
-    om.show_output(stats, events, workers, s)
+    if SHOWOUTPUT == True:
+        om.show_output(stats, events, workers, s)
+    elif type(SHOWOUTPUT) == str:
+        print(SHOWOUTPUT, end='')
+        sys.stdout.flush()
+
 
     # Plotting commands
     if SHOWGRAPH:

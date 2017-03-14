@@ -3,6 +3,7 @@ class StatisticsManager:
     # stats
 
     def __init__(self):
+        self.info = ''
         self.phonecall_counter = 0
         self.finished_phonecalls = 0
         self.average_queue_length = 0

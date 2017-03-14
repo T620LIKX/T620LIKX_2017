@@ -13,9 +13,12 @@ shift_times = [ {'starttime': hf.strtime2sec('9:00'), 'endtime': hf.strtime2sec(
                 {'starttime': hf.strtime2sec('12:00'), 'endtime': hf.strtime2sec('21:00') },
                 {'starttime': hf.strtime2sec('9:00'), 'endtime': hf.strtime2sec('15:00') },
                 {'starttime': hf.strtime2sec('10:00'), 'endtime': hf.strtime2sec('14:00') },
-                {'starttime': hf.strtime2sec('9:00'), 'endtime': hf.strtime2sec('21:00') }]
+                {'starttime': hf.strtime2sec('9:00'), 'endtime': hf.strtime2sec('21:00') } ]
 
 iterations = 5
+
+
+results = []
 
 days = ['man','tri','mid','fim','fos','lau','sun']
 
@@ -26,7 +29,12 @@ for d in days:
 
     for i in range(iterations):
         tmplamdas = lambdas.copy()
-        stats = simulator.run_simulation(settings_details = sim_settings, lambdas = tmplamdas, workers_details = workers, SHOWGRAPH=False)
+        stats = simulator.run_simulation(settings_details = sim_settings, lambdas = tmplamdas, workers_details = workers, SHOWGRAPH=False, SHOWOUTPUT='.')
+        stats.info = d
 
+        results.append(stats)
 
+print('')
+
+# do something clever with the results...
 
