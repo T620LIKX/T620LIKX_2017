@@ -36,8 +36,8 @@ def break_time(workers_details): # hvenær hann fer í kaffi hvort hann fari eni
             w['breaks'].append({'time': timi2, 'length': w['break_length']/2, 'type':'break'})
 
         else:# w['break_length']<=60*20 & w['break_length']>60*1:  kemst annars ekki inn
-            mu = w['shift_start'] + 200 # 60*60*1.5 # tekur kaffi meðaltali eftir 1.5 tíma vinnu
-            sigma = 60 # staðalfrávik 20 mín
+            mu = w['shift_start'] + 60*60*1.5 # tekur kaffi meðaltali eftir 1.5 tíma vinnu
+            sigma = 60*20 #sta'alfrávik 20 mín
             timi = numpy.random.normal(mu, sigma) # hvenær hann fer í kaffi
             w['breaks'].append({'time': timi, 'length': w['break_length'], 'type':'break'})
 
