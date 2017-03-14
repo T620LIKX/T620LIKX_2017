@@ -12,7 +12,7 @@ import numpy
 
 #numpy.random.seed(12345)
 
-# run_simlation function is called by sim_runner.py where the parameters are defined. 
+# run_simlation function is called by sim_runner.py where the parameters are defined.
 # If they are not defined, the variables will take the predefined values (None / False)
 
 # Run simulation function:
@@ -56,7 +56,7 @@ def run_simulation(settings_details = None, workers_details = None, lambdas = No
             print('\n')
 
         # Get the next event from the event list and store it in the variable e. See eventmanager for a closer look.
-        # Updates the current time to the time of the event we are looking at. 
+        # Updates the current time to the time of the event we are looking at.
         e = events.get_next_event()
         currenttime = e['time']
 
@@ -190,6 +190,8 @@ def run_simulation(settings_details = None, workers_details = None, lambdas = No
         plt.plot(stats.phonecall_queue_time, stats.phonecall_queue_counter)
         plt.plot(stats.reneg_time, stats.reneg_counter,'o')
         plt.show()
+
+    return stats
 
 if __name__ == '__main__':
     run_simulation()

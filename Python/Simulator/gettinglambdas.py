@@ -22,24 +22,10 @@ def CollectList(filename, day):
 			timi = float(data[i][1].split('|')[0].strip().replace(')',''))
 			timi = timi*3600
 			lambdas.append( {'time': timi, 'lam': thelam} )
-	
+
 	file.close()
 	return lambdas
 
 
 
-sim_settings = {}
-sim_settings['start time'] = 32400
-sim_settings['end time'] =  75600
-
-
-iterations = 5
-
-days = ['man','tri','mid','fim','fos','lau','sun']
-for d in days:
-	lambdas = CollectList('MedaltalPerHour.csv',d)
-
-	for i in range(iterations):
-		tmplamdas = lambdas.copy()
-		stats = simulator.run_simulation(settings_details = sim_settings, lambdas = tmplamdas, SHOWGRAPH=False)
 
