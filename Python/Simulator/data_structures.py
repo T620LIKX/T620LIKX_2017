@@ -39,8 +39,14 @@ class SortedQueue:
         return self.items == []
 
     def enqueue(self, item):
-        self.items.append(item)
-        self.items.sort(key = lambda x: x['time'])
+        index = 0
+        while index < len(self.items) and self.items[index]['time'] < item['time']:
+            index += 1
+
+        self.items.insert(index, item)
+
+#        self.items.append(item)
+#        self.items.sort(key = lambda x: x['time'])
 
     def dequeue(self):
         if (len(self.items) > 0):
