@@ -3,7 +3,7 @@ import datetime
 import calendar
 import numpy as np
 import pandas as pd
-engine = create_engine("postgresql://postgres:lukas@localhost/likanx") # breyta hjá hverjum
+engine = create_engine("postgresql://postgres:st36543654@localhost/likanx") # breyta hjá hverjum
     
 Table=pd.read_sql_table('callcenter_b',engine)
 
@@ -27,5 +27,22 @@ gogn=pd.DataFrame({"ar": timestamp.dt.year,
 
 # það þarf að skoða þetta, misssum ehv tölur 
 bigdata=Table.append(gogn)
-print(bigdata)
+a=Table[Table['call_center_name'].str.contains('1|2')]
+b=Table[Table['call_center_name'].str.contains('Net|TV')]
+total=Table['calls_queued'].sum()
+nettotal=a['calls_queued'].sum()
+tvtotal=b['calls_queued'].sum()
+netpri=a[a['call_center_name'].str.contains('Forgangur')]
+tvpri=b[b['call_center_name'].str.contains('Forgangur')]
+netpri=netpri['calls_queued'].sum()
+tvpri=tvpri['calls_queued'].sum()
+print(nettotal)
+print(tvtotal)
 
+print(netpri)
+print(tvpri)
+
+print('hlutfall forgangs símtala hjá verum 1 & 2')
+print(netpri/nettotal)
+print('hlutfall forgagns símtala hjá verum 3 & 4')
+print(tvpri/tvtotal)
