@@ -26,9 +26,11 @@ for scaling in lambdascaling:
         results[d] = []
 
         # sensitivity analysis to see the effect of changing lambdas
-        tmplambdas = lambdas[d].copy()
-        for i in tmplambdas:
-            i['lam'] = scaling * i['lam']
+        tmplambdas = []
+        for i in lambdas[d]:
+            tmp_i = i.copy()
+            tmp_i['lam'] = scaling*tmp_i['lam']
+            tmplambdas.append(tmp_i)
 
         phonecalls_answered_timely[d] = {'within_40': 0, 'within_60': 0, 'within_120': 0, 'within_180': 0}
         total_calls = 0
